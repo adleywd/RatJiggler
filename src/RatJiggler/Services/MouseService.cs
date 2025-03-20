@@ -1,11 +1,13 @@
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using RatJiggler.MouseUtilities.Windows;
 using RatJiggler.Services.Interfaces;
@@ -39,7 +41,7 @@ public class MouseService : IMouseService
         _backgroundTask = Task.Run(() => DoMoveAsync(moveX, moveY, secondsBetweenMovement, backAndForthMovement, _cts.Token));
     }
 
-    public void StartRealistic()
+    public void StartRealistic(Action? onStopped = null)
     {
         if (_backgroundTask is { IsCompleted: false })
         {
@@ -49,7 +51,7 @@ public class MouseService : IMouseService
 
         Console.WriteLine("Starting realistic background task...");
         _cts = new CancellationTokenSource();
-        _backgroundTask = Task.Run(() => DoMoveRealisticAsync(_cts.Token));
+        _backgroundTask = Task.Run(() => DoMoveRealisticAsync(onStopped,_cts.Token));
     }
 
     public void Stop()
@@ -90,7 +92,7 @@ public class MouseService : IMouseService
         Console.WriteLine("Background task stopped.");
     }
 
-    private async Task DoMoveRealisticAsync(CancellationToken cancellationToken)
+    private async Task DoMoveRealisticAsync(Action? onStopped = null, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -98,11 +100,6 @@ public class MouseService : IMouseService
             Rectangle screenBounds = await _windowService.GetScreenBoundsAsync();
             var mouseRealisticMovementDto = new MouseRealisticMovementDto(
                 ScreenBounds: screenBounds,
-                StatusMessage: "Running Realistic Movement...",
-                MoveX: 0,
-                MoveY: 0,
-                Duration: 0,
-                BackForth: false,
                 MinSpeed: 3,
                 MaxSpeed: 7,
                 EnableStepPauses: true,
@@ -115,9 +112,14 @@ public class MouseService : IMouseService
                 HorizontalBias: 0, // Favor horizontal movement
                 VerticalBias: 0, // Slightly favor upward movement
                 PaddingPercentage: 0.1f,
-                RandomSeed: null); // Optional: for reproducible behavior
+                RandomSeed: null, // Optional: for reproducible behavior
+                EnableUserInterventionDetection: true,
+                MovementThresholdInPixels: 10);
 
-            MouseUtility.MoveRealistic(mouseRealisticMovementDto, cancellationToken);
+            MouseUtility.MoveRealistic(
+                mouseRealisticMovementDto, 
+                onStopped,
+                cancellationToken);
 
             _logger.LogInformation("Realistic background task stopped.");
         }

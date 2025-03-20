@@ -4,11 +4,6 @@ namespace RatJiggler.MouseUtilities.Windows;
 
 public record MouseRealisticMovementDto(
     Rectangle ScreenBounds,
-    string StatusMessage,
-    int MoveX,
-    int MoveY,
-    int Duration,
-    bool BackForth,
     int MinSpeed,
     int MaxSpeed,
     bool EnableStepPauses,
@@ -19,6 +14,8 @@ public record MouseRealisticMovementDto(
     int RandomPauseMin,
     int RandomPauseMax,
     int? RandomSeed,
-    double HorizontalBias,
-    double VerticalBias,
-    double PaddingPercentage);
+    float HorizontalBias,
+    float VerticalBias,
+    float PaddingPercentage,
+    bool EnableUserInterventionDetection,
+    int MovementThresholdInPixels);

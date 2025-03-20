@@ -1,6 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Threading;
 using Windows.Win32;
 using Windows.Win32.UI.Input.KeyboardAndMouse;
 
@@ -23,108 +25,114 @@ public static class MouseUtility
     /// <summary>
     /// Moves the mouse realistically within the specified screen bounds.
     /// </summary>
-    /// <param name="screenBounds">The bounds of the screen.</param>
-    /// <param name="minSpeed">The minimum speed of the mouse movement (1 = slowest, 10 = fastest).</param>
-    /// <param name="maxSpeed">The maximum speed of the mouse movement (1 = slowest, 10 = fastest).</param>
-    /// <param name="enableStepPauses">Whether to include small pauses between each step.</param>
-    /// <param name="stepPauseMin">Minimum delay between steps (in milliseconds).</param>
-    /// <param name="stepPauseMax">Maximum delay between steps (in milliseconds).</param>
-    /// <param name="enableRandomPauses">Whether to include longer random pauses after some time.</param>
-    /// <param name="randomPauseProbability">Probability of a random pause (0 to 100).</param>
-    /// <param name="randomPauseMin">Minimum duration of a random pause (in milliseconds).</param>
-    /// <param name="randomPauseMax">Maximum duration of a random pause (in milliseconds).</param>
-    /// <param name="horizontalBias">Bias towards horizontal movement (-1 to 1). Positive values favor right, negative values favor left.</param>
-    /// <param name="verticalBias">Bias towards vertical movement (-1 to 1). Positive values favor down, negative values favor up.</param>
-    /// <param name="paddingPercentage">Percentage of screen bounds to use as padding (0 to 0.5).</param>
-    /// <param name="randomSeed">Optional random seed for reproducible behavior.</param>
-    /// <param name="cancellationToken">The cancellation token to stop the movement.</param>
+    /// <param name="mouseMovementDto">Mouse realistic movement DTO</param>
+    /// <param name="onStopped">On stop callback</param>
+    /// <param name="cancellationToken">Cancellation token used to stop the movement</param>
     public static void MoveRealistic(
-        MouseRealisticMovementDto dto,
-        CancellationToken cancellationToken = default)
+    MouseRealisticMovementDto mouseMovementDto,
+    Action? onStopped = null,
+    CancellationToken cancellationToken = default)
+{
+    // Validate inputs
+    var minSpeed = Math.Clamp(mouseMovementDto.MinSpeed, 1, 10);
+    var maxSpeed = Math.Clamp(mouseMovementDto.MaxSpeed, 1, 10);
+    if (minSpeed > maxSpeed)
     {
-        // Validate inputs
-        var minSpeed = Math.Clamp(dto.MinSpeed, 1, 10);
-        var maxSpeed = Math.Clamp(dto.MaxSpeed, 1, 10);
-        if (minSpeed > maxSpeed)
+        minSpeed = maxSpeed;
+    }
+
+    var randomPauseProbability = Math.Clamp(mouseMovementDto.RandomPauseProbability, 0, 100);
+    var paddingPercentage = Math.Clamp(mouseMovementDto.PaddingPercentage, 0, 0.5f);
+    var horizontalBias = Math.Clamp(mouseMovementDto.HorizontalBias, -1, 1);
+    var verticalBias = Math.Clamp(mouseMovementDto.VerticalBias, -1, 1);
+
+    // Initialize random number generator
+    Random random = mouseMovementDto.RandomSeed.HasValue ? new Random(mouseMovementDto.RandomSeed.Value) : new Random();
+
+    // Define realistic padding
+    var paddingX = (int)(mouseMovementDto.ScreenBounds.Width * paddingPercentage);
+    var paddingY = (int)(mouseMovementDto.ScreenBounds.Height * paddingPercentage);
+
+    var startX = mouseMovementDto.ScreenBounds.Left + paddingX;
+    var startY = mouseMovementDto.ScreenBounds.Top + paddingY;
+    var endX = mouseMovementDto.ScreenBounds.Right - paddingX;
+    var endY = mouseMovementDto.ScreenBounds.Bottom - paddingY;
+
+    // Get the initial mouse position
+    Point initialPosition = GetMousePosition();
+    Point lastPosition = initialPosition;
+
+    // Initialize direction variables
+    var directionX = random.Next(-5, 6); // Random initial X direction (-5 to 5 pixels)
+    var directionY = random.Next(-5, 6); // Random initial Y direction (-5 to 5 pixels)
+
+    while (!cancellationToken.IsCancellationRequested)
+    {
+        // Get the current mouse position
+        Point currentPosition = GetMousePosition();
+
+        // Check if the mouse has moved (user intervention) if enabled
+        if (mouseMovementDto.EnableUserInterventionDetection)
         {
-            minSpeed = maxSpeed;
+            // Calculate the distance moved since the last position
+            var deltaX = currentPosition.X - lastPosition.X;
+            var deltaY = currentPosition.Y - lastPosition.Y;
+            var distanceMoved = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            // If the distance moved exceeds the threshold, stop the realistic movement
+            if (distanceMoved > mouseMovementDto.MovementThresholdInPixels)
+            {
+                onStopped?.Invoke();
+                Console.WriteLine("Significant mouse movement detected. Stopping realistic movement...");
+                // break; // Exit the loop if the user moves the mouse significantly
+            }
         }
 
-        var randomPauseProbability = Math.Clamp(dto.RandomPauseProbability, 0, 100);
-        var paddingPercentage = Math.Clamp(dto.PaddingPercentage, 0, 0.5f);
-        var horizontalBias = Math.Clamp(dto.HorizontalBias, -1, 1);
-        var verticalBias = Math.Clamp(dto.VerticalBias, -1, 1);
+        // Track the current mouse position
+        lastPosition = currentPosition;
 
-        // Initialize random number generator
-        Random random = dto.RandomSeed.HasValue ? new Random(dto.RandomSeed.Value) : new Random();
-
-        // Define realistic padding
-        var paddingX = (int)(dto.ScreenBounds.Width * paddingPercentage);
-        var paddingY = (int)(dto.ScreenBounds.Height * paddingPercentage);
-
-        var startX = dto.ScreenBounds.Left + paddingX;
-        var startY = dto.ScreenBounds.Top + paddingY;
-        var endX = dto.ScreenBounds.Right - paddingX;
-        var endY = dto.ScreenBounds.Bottom - paddingY;
-
-        // Get the initial mouse position
-        Point currentPosition = GetMousePosition();
-        var currentX = currentPosition.X;
-        var currentY = currentPosition.Y;
-
-        // Initialize direction variables
-        var directionX = random.Next(-5, 6); // Random initial X direction (-5 to 5 pixels)
-        var directionY = random.Next(-5, 6); // Random initial Y direction (-5 to 5 pixels)
-
-        while (!cancellationToken.IsCancellationRequested)
+        // Adjust direction if close to the padding
+        if (currentPosition.X + directionX < startX || currentPosition.X + directionX > endX)
         {
-            // Track the current mouse position
-            currentPosition = GetMousePosition();
-            currentX = currentPosition.X;
-            currentY = currentPosition.Y;
+            directionX = -directionX; // Reverse X direction
+        }
 
-            // Adjust direction if close to the padding
-            if (currentX + directionX < startX || currentX + directionX > endX)
-            {
-                directionX = -directionX; // Reverse X direction
-            }
+        if (currentPosition.Y + directionY < startY || currentPosition.Y + directionY > endY)
+        {
+            directionY = -directionY; // Reverse Y direction
+        }
 
-            if (currentY + directionY < startY || currentY + directionY > endY)
-            {
-                directionY = -directionY; // Reverse Y direction
-            }
+        // Add slight randomness to the direction
+        directionX += random.Next(-1, 2); // Small random change in X direction
+        directionY += random.Next(-1, 2); // Small random change in Y direction
 
-            // Add slight randomness to the direction
-            directionX += random.Next(-1, 2); // Small random change in X direction
-            directionY += random.Next(-1, 2); // Small random change in Y direction
+        // Apply directional bias
+        directionX = (int)(directionX * (1 + horizontalBias));
+        directionY = (int)(directionY * (1 + verticalBias));
 
-            // Apply directional bias
-            directionX = (int)(directionX * (1 + horizontalBias));
-            directionY = (int)(directionY * (1 + verticalBias));
+        // Adjust step size based on speed
+        int stepSize = random.Next(minSpeed, maxSpeed + 1); // Randomize speed within the range
+        directionX = Math.Clamp(directionX, -stepSize, stepSize);
+        directionY = Math.Clamp(directionY, -stepSize, stepSize);
 
-            // Adjust step size based on speed
-            int stepSize = random.Next(minSpeed, maxSpeed + 1); // Randomize speed within the range
-            directionX = Math.Clamp(directionX, -stepSize, stepSize);
-            directionY = Math.Clamp(directionY, -stepSize, stepSize);
+        // Move the mouse incrementally
+        Move(directionX, directionY);
 
-            // Move the mouse incrementally
-            Move(directionX, directionY);
+        // Add a small delay between steps if enabled
+        if (mouseMovementDto.EnableStepPauses)
+        {
+            int randomDelay = random.Next(mouseMovementDto.StepPauseMin, mouseMovementDto.StepPauseMax + 1);
+            Thread.Sleep(randomDelay);
+        }
 
-            // Add a small delay between steps if enabled
-            if (dto.EnableStepPauses)
-            {
-                int randomDelay = random.Next(dto.StepPauseMin, dto.StepPauseMax + 1);
-                Thread.Sleep(randomDelay);
-            }
-
-            // Randomly introduce a longer pause to mimic human behavior if enabled
-            if (dto.EnableRandomPauses && random.Next(0, 100) < randomPauseProbability)
-            {
-                int pauseDuration = random.Next(dto.RandomPauseMin, dto.RandomPauseMax + 1);
-                Thread.Sleep(pauseDuration);
-            }
+        // Randomly introduce a longer pause to mimic human behavior if enabled
+        if (mouseMovementDto.EnableRandomPauses && random.Next(0, 100) < randomPauseProbability)
+        {
+            int pauseDuration = random.Next(mouseMovementDto.RandomPauseMin, mouseMovementDto.RandomPauseMax + 1);
+            Thread.Sleep(pauseDuration);
         }
     }
+}
 
     /// <summary>
     /// Gets the current mouse position.
@@ -169,7 +177,10 @@ public static class MouseUtility
     /// <param name="input">The input to send.</param>
     private static void SendInput(INPUT input)
     {
-        INPUT[] inputArray = { input };
+        INPUT[] inputArray =
+        {
+            input
+        };
         var inputSpan = new Span<INPUT>(inputArray);
 
 #pragma warning disable CA1416

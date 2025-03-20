@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -78,7 +79,7 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             StatusMessage = "Running Realistic Movement...";
-            _mouseService.StartRealistic();
+            _mouseService.StartRealistic(() => Dispatcher.UIThread.InvokeAsync(StopMovement));
         }
         catch (Exception ex)
         {

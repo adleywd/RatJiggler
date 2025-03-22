@@ -58,8 +58,13 @@ internal static class Program
         }
 
         private static AppBuilder ConfigAvaloniaAppBuilder(AppBuilder appBuilder) =>
-            appBuilder
-                .UsePlatformDetect()
+            appBuilder.UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace();
+        
+        // Used to display the app in design mode
+        // public static AppBuilder BuildAvaloniaApp() =>
+        //     AppBuilder.Configure<App>()
+        //         .UsePlatformDetect()
+        //         .LogToTrace();
     }

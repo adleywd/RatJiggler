@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:RatJiggler.Views"
         xmlns:vm="using:RatJiggler.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,270 +9,32 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="RatJiggler"
-        Height="600"
-        Width="800"
+        Height="700"
+        Width="550"
         CanResize="True"
         ShowInTaskbar="True"
         WindowState="Normal"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-<Grid Margin="10">
+    <Grid Margin="15" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Main Content -->
-        <TabControl Grid.Row="0">
-            <!-- Normal Movement Tab -->
+        <!-- Tab Control for Modes -->
+        <TabControl Grid.Row="0" Margin="0,0,0,20">
             <TabItem Header="Normal Movement">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <!-- Content for Normal Movement -->
-                    <Grid Grid.Row="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Labels for X and Y Movement -->
-                        <Label Content="Movement in X (pixels):"
-                               Grid.Row="0" Grid.Column="0"
-                               Margin="5" HorizontalAlignment="Center" />
-                        <Label Content="Movement in Y (pixels):"
-                               Grid.Row="0" Grid.Column="1"
-                               Margin="5" HorizontalAlignment="Center" />
-
-                        <!-- Inputs for X and Y Movement -->
-                        <TextBox Text="{Binding MoveX}" Width="100"
-                                 Grid.Row="1" Grid.Column="0"
-                                 Margin="5" HorizontalAlignment="Center" />
-                        <TextBox Text="{Binding MoveY}" Width="100"
-                                 Grid.Row="1" Grid.Column="1"
-                                 Margin="5" HorizontalAlignment="Center" />
-
-                        <!-- Labels for Duration and Back/Forth -->
-                        <Label Content="Duration (seconds):"
-                               Grid.Row="2" Grid.Column="0"
-                               Margin="5" HorizontalAlignment="Center" />
-                        <Label Content="Back and Forth Movement:"
-                               Grid.Row="2" Grid.Column="1"
-                               Margin="5" HorizontalAlignment="Center" />
-
-                        <!-- Inputs for Duration and Back/Forth -->
-                        <TextBox Text="{Binding Duration}" Width="100"
-                                 Grid.Row="3" Grid.Column="0"
-                                 Margin="5" HorizontalAlignment="Center" />
-                        <CheckBox IsChecked="{Binding BackForth}"
-                                  Grid.Row="3" Grid.Column="1"
-                                  Margin="5"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Center" />
-                    </Grid>
-
-                    <!-- Buttons for Normal Movement -->
-                    <StackPanel Grid.Row="1"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                Margin="0,10,0,0">
-                        <Button Content="Run ( Ctrl + R )"
-                                Command="{Binding StartNormalMovementCommand}"
-                                Width="150" Height="30" Margin="5" />
-                        <Button Content="Stop ( Ctrl + C )"
-                                Command="{Binding StopMovementCommand}"
-                                Width="150" Height="30" Margin="5" />
-                    </StackPanel>
-                </Grid>
+                <local:NormalMovementView DataContext="{Binding}" />
             </TabItem>
-
-            <!-- Realistic Movement Tab -->
             <TabItem Header="Realistic Movement">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <!-- Content for Realistic Movement -->
-                    <StackPanel Grid.Row="0">
-                        <!-- Speed Configuration -->
-                        <Expander Header="Speed" Margin="5">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Min Speed -->
-                                <Label Content="Min Speed (1-10):"
-                                       Grid.Row="0" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding MinSpeed}" Width="100"
-                                         Grid.Row="0" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-
-                                <!-- Max Speed -->
-                                <Label Content="Max Speed (1-10):"
-                                       Grid.Row="1" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding MaxSpeed}" Width="100"
-                                         Grid.Row="1" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-                            </Grid>
-                        </Expander>
-
-                        <!-- Pause Configuration -->
-                        <Expander Header="Pauses" Margin="5">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Step Pauses -->
-                                <CheckBox IsChecked="{Binding EnableStepPauses}"
-                                           Content="Enable Step Pauses"
-                                           Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                                           Margin="5" HorizontalAlignment="Left" />
-
-                                <!-- Step Pause Min/Max -->
-                                <Label Content="Step Pause Min (ms):"
-                                       Grid.Row="1" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding StepPauseMin}" Width="100"
-                                         Grid.Row="1" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-
-                                <Label Content="Step Pause Max (ms):"
-                                       Grid.Row="2" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding StepPauseMax}" Width="100"
-                                         Grid.Row="2" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-
-                                <!-- Random Pauses -->
-                                <CheckBox IsChecked="{Binding EnableRandomPauses}"
-                                           Content="Enable Random Pauses"
-                                           Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                                           Margin="5" HorizontalAlignment="Left" />
-
-                                <!-- Random Pause Probability -->
-                                <Label Content="Random Pause Probability (0-100):"
-                                       Grid.Row="4" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding RandomPauseProbability}" Width="100"
-                                         Grid.Row="4" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-
-                                <!-- Random Pause Min/Max -->
-                                <Label Content="Random Pause Min (ms):"
-                                       Grid.Row="5" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding RandomPauseMin}" Width="100"
-                                         Grid.Row="5" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-
-                                <Label Content="Random Pause Max (ms):"
-                                       Grid.Row="6" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding RandomPauseMax}" Width="100"
-                                         Grid.Row="6" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-                            </Grid>
-                        </Expander>
-
-                        <!-- Directional Bias -->
-                        <Expander Header="Directional Bias" Margin="5">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Horizontal Bias -->
-                                <Label Content="Horizontal Bias (-1 to 1):"
-                                       Grid.Row="0" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding HorizontalBias}" Width="100"
-                                         Grid.Row="0" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-
-                                <!-- Vertical Bias -->
-                                <Label Content="Vertical Bias (-1 to 1):"
-                                       Grid.Row="1" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding VerticalBias}" Width="100"
-                                         Grid.Row="1" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-                            </Grid>
-                        </Expander>
-
-                        <!-- Padding Configuration -->
-                        <Expander Header="Padding" Margin="5">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Padding Percentage -->
-                                <Label Content="Padding Percentage (0 to 0.5):"
-                                       Grid.Row="0" Grid.Column="0"
-                                       Margin="5" HorizontalAlignment="Right" />
-                                <TextBox Text="{Binding PaddingPercentage}" Width="100"
-                                         Grid.Row="0" Grid.Column="1"
-                                         Margin="5" HorizontalAlignment="Left" />
-                            </Grid>
-                        </Expander>
-                    </StackPanel>
-
-                    <!-- Buttons for Realistic Movement -->
-                    <StackPanel Grid.Row="1"
-                                Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                Margin="0,10,0,0">
-                        <Button Content="Run Realistic ( Ctrl + R )"
-                                Command="{Binding StartRealisticMovementCommand}"
-                                Width="150" Height="30" Margin="5" />
-                        <Button Content="Stop ( Ctrl + C )"
-                                Command="{Binding StopMovementCommand}"
-                                Width="150" Height="30" Margin="5" />
-                    </StackPanel>
-                </Grid>
+                <local:RealisticMovementView DataContext="{Binding}" />
             </TabItem>
         </TabControl>
 
@@ -279,8 +42,9 @@
         <TextBlock Text="{Binding StatusMessage}"
                    Grid.Row="1"
                    HorizontalAlignment="Center"
-                   Margin="0,10,0,0"
+                   Margin="0,20,0,0"
                    FontSize="14"
-                   FontWeight="Bold" />
+                   FontWeight="Bold"
+                   Foreground="Green" />
     </Grid>
 </Window>

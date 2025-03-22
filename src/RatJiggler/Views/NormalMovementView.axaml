@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:RatJiggler.ViewModels"
+             x:Class="RatJiggler.Views.NormalMovementView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Movement Inputs -->
+        <StackPanel Grid.Row="0" Spacing="10">
+            <TextBlock Text="Movement Configuration"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- X and Y Movement -->
+                <Label Content="X Movement (pixels):"
+                       Grid.Row="0" Grid.Column="0"
+                       Margin="5" HorizontalAlignment="Right" />
+                <TextBox Text="{Binding MoveX}" Width="100"
+                         Grid.Row="0" Grid.Column="1"
+                         Margin="5" HorizontalAlignment="Left" />
+
+                <Label Content="Y Movement (pixels):"
+                       Grid.Row="1" Grid.Column="0"
+                       Margin="5" HorizontalAlignment="Right" />
+                <TextBox Text="{Binding MoveY}" Width="100"
+                         Grid.Row="1" Grid.Column="1"
+                         Margin="5" HorizontalAlignment="Left" />
+
+                <!-- Duration -->
+                <Label Content="Duration (seconds):"
+                       Grid.Row="2" Grid.Column="0"
+                       Margin="5" HorizontalAlignment="Right" />
+                <TextBox Text="{Binding Duration}" Width="100"
+                         Grid.Row="2" Grid.Column="1"
+                         Margin="5" HorizontalAlignment="Left" />
+            </Grid>
+        </StackPanel>
+
+        <!-- Back/Forth Toggle -->
+        <CheckBox IsChecked="{Binding BackForth}"
+                  Content="Enable Back and Forth Movement"
+                  Grid.Row="1"
+                  Margin="5"
+                  HorizontalAlignment="Left" />
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Spacing="10"
+                    Margin="0,20,0,0">
+            <Button Content="Run (Ctrl + R)"
+                    Command="{Binding StartNormalMovementCommand}"
+                    Width="150" Height="30" />
+            <Button Content="Stop (Ctrl + C)"
+                    Command="{Binding StopMovementCommand}"
+                    Width="150" Height="30" />
+        </StackPanel>
+    </Grid>
+</UserControl>

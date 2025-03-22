@@ -1,8 +1,10 @@
 ﻿using System;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using RatJiggler.Helpers;
 using RatJiggler.Services;
 using RatJiggler.Services.Interfaces;
 
@@ -15,15 +17,21 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel()
     {
-        ThrowIfNotDesignMode();
+        AvaloniaUtilities.ThrowIfNotDesignMode();
+#pragma warning disable CA1416
+        _mouseService = new WindowsMouseService(
+            new Logger<WindowsMouseService>(new LoggerFactory()),
+            new ScreenWindowService(new Window()));
+        _logger = new Logger<MainWindowViewModel>(new LoggerFactory());
+#pragma warning restore CA1416
     }
-    
+
     public MainWindowViewModel(IMouseService mouseService, ILogger<MainWindowViewModel> logger)
     {
         _mouseService = mouseService;
         _logger = logger;
     }
-    
+
     [ObservableProperty] private string _statusMessage = "Stopped!";
 
     [ObservableProperty] private int _moveX = 50;
@@ -100,14 +108,6 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             StatusMessage = "Error while Stopping!";
             _logger.LogError(ex, "Error stopping movement, close the application to stop.");
-        }
-    }
-    
-    private static void ThrowIfNotDesignMode()
-    {
-        if (!Avalonia.Controls.Design.IsDesignMode)
-        {
-            throw new InvalidOperationException("This method should only be used in design mode.");
         }
     }
 }

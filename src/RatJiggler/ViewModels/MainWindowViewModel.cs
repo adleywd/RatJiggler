@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Drawing;
+using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using RatJiggler.Helpers;
+using RatJiggler.MouseUtilities.Windows;
 using RatJiggler.Services;
 using RatJiggler.Services.Interfaces;
 
@@ -13,27 +16,20 @@ namespace RatJiggler.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly IMouseService _mouseService;
+    private readonly IScreenWindowService _screenWindowService;
     private readonly ILogger<MainWindowViewModel> _logger;
 
-    public MainWindowViewModel()
-    {
-        AvaloniaUtilities.ThrowIfNotDesignMode();
-#pragma warning disable CA1416
-        _mouseService = new WindowsMouseService(
-            new Logger<WindowsMouseService>(new LoggerFactory()),
-            new ScreenWindowService(new Window()));
-        _logger = new Logger<MainWindowViewModel>(new LoggerFactory());
-#pragma warning restore CA1416
-    }
-
-    public MainWindowViewModel(IMouseService mouseService, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(IMouseService mouseService, IScreenWindowService screenWindowService, ILogger<MainWindowViewModel> logger)
     {
         _mouseService = mouseService;
+        _screenWindowService = screenWindowService;
         _logger = logger;
     }
 
     [ObservableProperty] private string _statusMessage = "Stopped!";
 
+    [ObservableProperty] private IBrush _statusMessageColor = Brushes.MediumPurple;
+    
     [ObservableProperty] private int _moveX = 50;
 
     [ObservableProperty] private int _moveY = 0;
@@ -60,38 +56,78 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty] private int _randomPauseMax = 500;
 
-    [ObservableProperty] private double _horizontalBias = 0;
+    [ObservableProperty] private float _horizontalBias = 0;
 
-    [ObservableProperty] private double _verticalBias = 0;
+    [ObservableProperty] private float _verticalBias = 0;
 
-    [ObservableProperty] private double _paddingPercentage = 0.1;
+    [ObservableProperty] private float _paddingPercentage = 0.1f;
+    
+    [ObservableProperty] private int _selectedMouseMovementModeIndex = 0;
+    
+    [ObservableProperty] private int? _randomSeed = null;
+    
+    [ObservableProperty] private bool _enableUserInterventionDetection = true;
+    
+    [ObservableProperty] private int _movementThresholdInPixels = 10;
 
+    [RelayCommand]
+    private async Task StartMouseMovementByHotkeyAsync()
+    {
+        switch (SelectedMouseMovementModeIndex)
+        {
+            case 0:
+                StartNormalMovement();
+                break;
+            default:
+                await StartRealisticMovementAsync().ConfigureAwait(ConfigureAwaitOptions.None);
+                break;
+        }
+    }
+    
     [RelayCommand]
     private void StartNormalMovement()
     {
         try
         {
-            StatusMessage = "Running...";
+            SetStatusMessage(false);
             _mouseService.Start(MoveX, MoveY, Duration, BackForth);
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error... Stopped!";
+            SetStatusMessage(true, isError: true, message: "Error starting normal mouse movement");
             _logger.LogError(ex, "Error starting normal movement");
         }
     }
 
     [RelayCommand]
-    private void StartRealisticMovement()
+    private async Task StartRealisticMovementAsync()
     {
         try
         {
-            StatusMessage = "Running Realistic Movement...";
-            _mouseService.StartRealistic(() => Dispatcher.UIThread.InvokeAsync(StopMovement));
+            SetStatusMessage(false);
+            Rectangle screenBounds = await _screenWindowService.GetScreenBoundsAsync().ConfigureAwait(ConfigureAwaitOptions.None);
+            var mouseRealisticMovementDto = new MouseRealisticMovementDto(
+                screenBounds,
+                MinSpeed,
+                MaxSpeed,
+                EnableStepPauses,
+                StepPauseMin,
+                StepPauseMax,
+                EnableRandomPauses,
+                RandomPauseProbability,
+                RandomPauseMin,
+                RandomPauseMax,
+                RandomSeed, // Use the new property
+                HorizontalBias,
+                VerticalBias,
+                PaddingPercentage,
+                EnableUserInterventionDetection, // Use the new property
+                MovementThresholdInPixels); // Use the new property
+            _mouseService.StartRealistic(mouseRealisticMovementDto, () => Dispatcher.UIThread.InvokeAsync(StopMovement));
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error...Stopped!";
+            SetStatusMessage(true , isError: true, message: "Error starting realistic mouse movement");
             _logger.LogError(ex, "Error starting realistic movement");
         }
     }
@@ -102,12 +138,34 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             _mouseService.Stop();
-            StatusMessage = "Stopped!";
+            SetStatusMessage(true);
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error while Stopping!";
-            _logger.LogError(ex, "Error stopping movement, close the application to stop.");
+            SetStatusMessage(true, isError: true, message: "Error while stopping mouse movement, close the application to stop.");
+            _logger.LogError(ex, "Error stopping movement");
+        }
+    }
+
+    private void SetStatusMessage(bool isStopped, bool isError = false, string? message = null)
+    {
+        if(isError && message is not null)
+        {
+            StatusMessage = message;
+            StatusMessageColor = Brushes.OrangeRed;
+            return;
+        }
+        
+        switch (isStopped)
+        {
+            case true:
+                StatusMessage = "Mouse movement stopped!";
+                StatusMessageColor = Brushes.OrangeRed;
+                break;
+            default:
+                StatusMessage = "Mouse movement started!";
+                StatusMessageColor = Brushes.Green;
+                break;
         }
     }
 }

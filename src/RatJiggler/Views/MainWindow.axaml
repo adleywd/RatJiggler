@@ -8,32 +8,54 @@
         x:Class="RatJiggler.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="RatJiggler"
+        Title="Rat Jiggler"
         Height="700"
         Width="550"
-        CanResize="True"
+        CanResize="False"
         ShowInTaskbar="True"
         WindowState="Normal"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight">
+        SizeToContent="WidthAndHeight"
+        SystemDecorations="Full"
+        UseLayoutRounding="True"
+        RequestedThemeVariant="Light">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
+    <!-- Key Bindings for Keyboard Shortcuts -->
+    <Window.KeyBindings>
+        <!-- Ctrl + R to Start Normal Movement -->
+        <KeyBinding Gesture="Ctrl+R"
+                    Command="{Binding StartMouseMovementByHotkeyCommand}" />
+
+        <!-- Ctrl + C to Stop Movement -->
+        <KeyBinding Gesture="Ctrl+C"
+                    Command="{Binding StopMovementCommand}" />
+    </Window.KeyBindings>
+
     <Grid Margin="15" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />   <!-- Tab Control -->
+            <RowDefinition Height="Auto" /> <!-- Status Message -->
         </Grid.RowDefinitions>
 
         <!-- Tab Control for Modes -->
-        <TabControl Grid.Row="0" Margin="0,0,0,20">
-            <TabItem Header="Normal Movement">
+        <TabControl Grid.Row="0"
+                    Margin="0,0,0,20"
+                    BorderThickness="1"
+                    SelectedIndex="{Binding SelectedMouseMovementModeIndex}">
+            
+            <!-- Normal Movement Tab -->
+            <TabItem Header="Normal Movement"
+                     Cursor="Hand">
                 <local:NormalMovementView DataContext="{Binding}" />
             </TabItem>
-            <TabItem Header="Realistic Movement">
+
+            <!-- Realistic Movement Tab -->
+            <TabItem Header="Realistic Movement"
+                     Cursor="Hand">
                 <local:RealisticMovementView DataContext="{Binding}" />
             </TabItem>
         </TabControl>
@@ -45,6 +67,6 @@
                    Margin="0,20,0,0"
                    FontSize="14"
                    FontWeight="Bold"
-                   Foreground="Green" />
+                   Foreground="{Binding StatusMessageColor}" />
     </Grid>
 </Window>

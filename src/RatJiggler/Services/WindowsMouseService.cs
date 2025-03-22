@@ -1,13 +1,7 @@
 using System;
-using System.Drawing;
-using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Platform;
-using Avalonia.Threading;
 using Microsoft.Extensions.Logging;
 using RatJiggler.MouseUtilities.Windows;
 using RatJiggler.Services.Interfaces;
@@ -18,14 +12,12 @@ namespace RatJiggler.Services;
 public class WindowsMouseService : IMouseService
 {
     private readonly ILogger<WindowsMouseService> _logger;
-    private readonly IScreenWindowService _screenWindowService;
     private CancellationTokenSource? _cts;
     private Task? _backgroundTask;
 
-    public WindowsMouseService(ILogger<WindowsMouseService> logger, IScreenWindowService screenWindowService)
+    public WindowsMouseService(ILogger<WindowsMouseService> logger)
     {
         _logger = logger;
-        _screenWindowService = screenWindowService;
     }
 
     public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement)
@@ -41,7 +33,7 @@ public class WindowsMouseService : IMouseService
         _backgroundTask = Task.Run(() => DoMoveAsync(moveX, moveY, secondsBetweenMovement, backAndForthMovement, _cts.Token));
     }
 
-    public void StartRealistic(Action? onStopped = null)
+    public void StartRealistic(MouseRealisticMovementDto mouseRealisticMovementDto, Action? onStopped = null)
     {
         if (_backgroundTask is { IsCompleted: false })
         {
@@ -51,7 +43,7 @@ public class WindowsMouseService : IMouseService
 
         Console.WriteLine("Starting realistic background task...");
         _cts = new CancellationTokenSource();
-        _backgroundTask = Task.Run(() => DoMoveRealisticAsync(onStopped,_cts.Token));
+        _backgroundTask = Task.Run(() => DoMoveRealisticAsync(mouseRealisticMovementDto,onStopped,_cts.Token));
     }
 
     public void Stop()
@@ -92,30 +84,10 @@ public class WindowsMouseService : IMouseService
         Console.WriteLine("Background task stopped.");
     }
 
-    private async Task DoMoveRealisticAsync(Action? onStopped = null, CancellationToken cancellationToken = default)
+    private async Task DoMoveRealisticAsync(MouseRealisticMovementDto mouseRealisticMovementDto, Action? onStopped = null, CancellationToken cancellationToken = default)
     {
         try
         {
-            // Use the Dispatcher to marshal the call to the UI thread
-            Rectangle screenBounds = await _screenWindowService.GetScreenBoundsAsync().ConfigureAwait(ConfigureAwaitOptions.None);
-            var mouseRealisticMovementDto = new MouseRealisticMovementDto(
-                ScreenBounds: screenBounds,
-                MinSpeed: 3,
-                MaxSpeed: 7,
-                EnableStepPauses: true,
-                StepPauseMin: 20,
-                StepPauseMax: 50,
-                EnableRandomPauses: true,
-                RandomPauseProbability: 10,
-                RandomPauseMin: 100,
-                RandomPauseMax: 500,
-                HorizontalBias: 0, // Favor horizontal movement
-                VerticalBias: 0, // Slightly favor upward movement
-                PaddingPercentage: 0.1f,
-                RandomSeed: null, // Optional: for reproducible behavior
-                EnableUserInterventionDetection: true,
-                MovementThresholdInPixels: 10);
-
             MouseUtility.MoveRealistic(
                 mouseRealisticMovementDto, 
                 onStopped,

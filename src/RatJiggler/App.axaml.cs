@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using RatJiggler.Helpers;
 using RatJiggler.ViewModels;
 using RatJiggler.Views;
 
@@ -14,12 +13,6 @@ public partial class App : Application
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public App()
-    {
-        AvaloniaUtilities.ThrowIfNotDesignMode();
-        _serviceProvider = new ServiceCollection().BuildServiceProvider();
-    }
-    
     public App(IServiceProvider serviceProvider) : base()
     {
         _serviceProvider = serviceProvider;

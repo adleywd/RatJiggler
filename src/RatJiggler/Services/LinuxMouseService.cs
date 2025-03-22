@@ -1,4 +1,5 @@
 using System;
+using RatJiggler.MouseUtilities.Windows;
 using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.Services;
@@ -10,7 +11,7 @@ public class LinuxMouseService : IMouseService
         throw new NotImplementedException();
     }
 
-    public void StartRealistic(Action? onStopped = null)
+    public void StartRealistic(MouseRealisticMovementDto mouseRealisticMovementDto, Action? onStopped = null)
     {
         throw new NotImplementedException();
     }

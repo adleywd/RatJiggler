@@ -39,4 +39,8 @@
     <ItemGroup>
       <ProjectReference Include="..\RatJiggler.MouseUtilities.Windows\RatJiggler.MouseUtilities.Windows.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Helpers\" />
+    </ItemGroup>
 </Project>

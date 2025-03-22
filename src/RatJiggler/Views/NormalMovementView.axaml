@@ -16,10 +16,9 @@
         <!-- Movement Inputs -->
         <StackPanel Grid.Row="0" Spacing="10">
             <TextBlock Text="Movement Configuration"
-                       FontSize="14"
+                       FontSize="16"
                        FontWeight="Bold"
-                       Margin="0,0,0,10" />
-
+                       Foreground="MediumPurple"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -69,12 +68,24 @@
                     HorizontalAlignment="Center"
                     Spacing="10"
                     Margin="0,20,0,0">
-            <Button Content="Run (Ctrl + R)"
-                    Command="{Binding StartNormalMovementCommand}"
-                    Width="150" Height="30" />
-            <Button Content="Stop (Ctrl + C)"
-                    Command="{Binding StopMovementCommand}"
-                    Width="150" Height="30" />
+            <Button Width="200" Command="{Binding StartNormalMovementCommand}">
+                <Button.Content>
+                    <TextBlock TextAlignment="Center">
+                        <Run Text="Start Mouse Movement" />
+                        <LineBreak />
+                        <Run Text="(Ctrl + R)" />
+                    </TextBlock>
+                </Button.Content>
+            </Button>
+            <Button Width="200" Command="{Binding StopMovementCommand}">
+                <Button.Content>
+                    <TextBlock TextAlignment="Center">
+                        <Run Text="Stop Mouse Movement" />
+                        <LineBreak />
+                        <Run Text="(Ctrl + C)" />
+                    </TextBlock>
+                </Button.Content>
+            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

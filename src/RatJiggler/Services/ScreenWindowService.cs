@@ -9,11 +9,11 @@ using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.Services;
 
-public class WindowService : IWindowService
+public class ScreenWindowService : IScreenWindowService
 {
     private readonly Window _window;
     
-    public WindowService(Window window)
+    public ScreenWindowService(Window window)
     {
         _window = window ?? throw new ArgumentNullException(nameof(window));
     }

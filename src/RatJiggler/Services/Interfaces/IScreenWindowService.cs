@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace RatJiggler.Services.Interfaces;
 
-public interface IWindowService
+public interface IScreenWindowService
 {
     Task<Rectangle> GetScreenBoundsAsync();
 }

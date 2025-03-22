@@ -99,7 +99,7 @@ public partial class MainWindowViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = "Error while Stopping!";
-            _logger.LogError(ex, "Error stopping movement");
+            _logger.LogError(ex, "Error stopping movement, close the application to stop.");
         }
     }
     

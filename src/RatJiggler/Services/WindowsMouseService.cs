@@ -15,17 +15,17 @@ using RatJiggler.Services.Interfaces;
 namespace RatJiggler.Services;
 
 [SupportedOSPlatform("windows5.0")]
-public class MouseService : IMouseService
+public class WindowsMouseService : IMouseService
 {
-    private readonly ILogger<MouseService> _logger;
-    private readonly IWindowService _windowService;
+    private readonly ILogger<WindowsMouseService> _logger;
+    private readonly IScreenWindowService _screenWindowService;
     private CancellationTokenSource? _cts;
     private Task? _backgroundTask;
 
-    public MouseService(ILogger<MouseService> logger, IWindowService windowService)
+    public WindowsMouseService(ILogger<WindowsMouseService> logger, IScreenWindowService screenWindowService)
     {
         _logger = logger;
-        _windowService = windowService;
+        _screenWindowService = screenWindowService;
     }
 
     public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement)
@@ -97,7 +97,7 @@ public class MouseService : IMouseService
         try
         {
             // Use the Dispatcher to marshal the call to the UI thread
-            Rectangle screenBounds = await _windowService.GetScreenBoundsAsync();
+            Rectangle screenBounds = await _screenWindowService.GetScreenBoundsAsync().ConfigureAwait(ConfigureAwaitOptions.None);
             var mouseRealisticMovementDto = new MouseRealisticMovementDto(
                 ScreenBounds: screenBounds,
                 MinSpeed: 3,

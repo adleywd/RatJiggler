@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Controls;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Logging;
 using RatJiggler.Services;
 using RatJiggler.Services.Interfaces;
 using RatJiggler.ViewModels;
-using RatJiggler.Views;
 
 namespace RatJiggler;
 
@@ -32,15 +30,33 @@ internal static class Program
 
             hostBuilder.Services.AddLogging(builder => builder.AddConsole());
             
-            hostBuilder.Services.AddSingleton<IMouseService, MouseService>();
-            hostBuilder.Services.AddSingleton<IWindowService>(sp => new WindowService(new Window()));
+            AddPlatformSpecifServices(hostBuilder.Services);
+            
+            // Add services for the screen window, which is used to get the screen bounds
+            hostBuilder.Services.AddSingleton<IScreenWindowService>(_ => new ScreenWindowService(new Window()));
             
             hostBuilder.Services.AddAvaloniauiDesktopApplication<App>(ConfigAvaloniaAppBuilder);
             hostBuilder.Services.AddSingleton<MainWindowViewModel>();
             IHost appHost = hostBuilder.Build();
             appHost.RunAvaloniauiApplication(args);
         }
-        
+
+        private static void AddPlatformSpecifServices(IServiceCollection services)
+        {
+            if (OperatingSystem.IsWindowsVersionAtLeast(5, 0))
+            {
+                services.AddSingleton<IMouseService, WindowsMouseService>();
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                services.AddSingleton<IMouseService, LinuxMouseService>();
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("Unsupported operating system.");
+            }
+        }
+
         private static AppBuilder ConfigAvaloniaAppBuilder(AppBuilder appBuilder) =>
             appBuilder
                 .UsePlatformDetect()

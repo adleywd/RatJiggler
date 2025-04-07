@@ -58,7 +58,7 @@ public class UserSettingsService : IUserSettingsService
             MoveX = entity.MoveX,
             MoveY = entity.MoveY,
             Duration = entity.Duration,
-            BackForth = entity.BackForth,
+            BackAndForth = entity.BackForth,
             MinSpeed = entity.MinSpeed,
             MaxSpeed = entity.MaxSpeed,
             EnableStepPauses = entity.EnableStepPauses,
@@ -83,7 +83,7 @@ public class UserSettingsService : IUserSettingsService
         entity.MoveX = model.MoveX;
         entity.MoveY = model.MoveY;
         entity.Duration = model.Duration;
-        entity.BackForth = model.BackForth;
+        entity.BackForth = model.BackAndForth;
         entity.MinSpeed = model.MinSpeed;
         entity.MaxSpeed = model.MaxSpeed;
         entity.EnableStepPauses = model.EnableStepPauses;

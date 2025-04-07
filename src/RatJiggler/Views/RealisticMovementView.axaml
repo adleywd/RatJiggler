@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:RatJiggler.ViewModels"
              x:Class="RatJiggler.Views.RealisticMovementView"
-             x:DataType="vm:MainWindowViewModel">
+             x:DataType="vm:RealisticMovementViewModel">
     
     <Grid Margin="10">
         <ScrollViewer VerticalScrollBarVisibility="Auto"
@@ -144,7 +144,7 @@
                             HorizontalAlignment="Center"
                             Spacing="10"
                             Margin="0,20,0,0">
-                    <Button Width="200" Command="{Binding StartRealisticMovementCommand}">
+                    <Button Width="200" Command="{Binding StartMovementCommand}">
                         <Button.Content>
                             <TextBlock TextAlignment="Center">
                                 <Run Text="Start Mouse Movement" />

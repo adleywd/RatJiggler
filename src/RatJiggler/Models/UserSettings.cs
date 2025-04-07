@@ -10,7 +10,7 @@ public class UserSettings
     public int MoveX { get; set; }
     public int MoveY { get; set; }
     public int Duration { get; set; }
-    public bool BackForth { get; set; }
+    public bool BackAndForth { get; set; }
     public int MinSpeed { get; set; }
     public int MaxSpeed { get; set; }
     public bool EnableStepPauses { get; set; }

@@ -4,7 +4,7 @@ using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.Services;
 
-public class LinuxMouseService : IMouseService
+public class LinuxMouseService : INormalMouseService, IRealisticMouseService
 {
     public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement)
     {

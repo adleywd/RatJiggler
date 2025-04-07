@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:RatJiggler.ViewModels"
              x:Class="RatJiggler.Views.NormalMovementView"
-             x:DataType="vm:MainWindowViewModel">
+             x:DataType="vm:NormalMovementViewModel">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -56,7 +56,7 @@
         </StackPanel>
 
         <!-- Back/Forth Toggle -->
-        <CheckBox IsChecked="{Binding BackForth}"
+        <CheckBox IsChecked="{Binding BackAndForth}"
                   Content="Enable Back and Forth Movement"
                   Grid.Row="1"
                   Margin="5"
@@ -68,7 +68,7 @@
                     HorizontalAlignment="Center"
                     Spacing="10"
                     Margin="0,20,0,0">
-            <Button Width="200" Command="{Binding StartNormalMovementCommand}">
+            <Button Width="200" Command="{Binding StartMovementCommand}">
                 <Button.Content>
                     <TextBlock TextAlignment="Center">
                         <Run Text="Start Mouse Movement" />

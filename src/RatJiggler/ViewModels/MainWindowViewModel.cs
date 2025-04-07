@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using RatJiggler.MouseUtilities.Windows;
+using RatJiggler.Models;
 using RatJiggler.Services;
 using RatJiggler.Services.Interfaces;
 
@@ -17,13 +18,20 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly IMouseService _mouseService;
     private readonly IScreenWindowService _screenWindowService;
+    private readonly IUserSettingsService _userSettingsService;
     private readonly ILogger<MainWindowViewModel> _logger;
 
-    public MainWindowViewModel(IMouseService mouseService, IScreenWindowService screenWindowService, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(
+        IMouseService mouseService,
+        IScreenWindowService screenWindowService,
+        IUserSettingsService userSettingsService,
+        ILogger<MainWindowViewModel> logger)
     {
         _mouseService = mouseService;
         _screenWindowService = screenWindowService;
+        _userSettingsService = userSettingsService;
         _logger = logger;
+        LoadSettings();
     }
 
     [ObservableProperty] private string _statusMessage = "Stopped!";
@@ -76,7 +84,7 @@ public partial class MainWindowViewModel : ViewModelBase
         switch (SelectedMouseMovementModeIndex)
         {
             case 0:
-                StartNormalMovement();
+                await StartNormalMovementAsync().ConfigureAwait(ConfigureAwaitOptions.None);
                 break;
             default:
                 await StartRealisticMovementAsync().ConfigureAwait(ConfigureAwaitOptions.None);
@@ -85,10 +93,11 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     
     [RelayCommand]
-    private void StartNormalMovement()
+    private async Task StartNormalMovementAsync()
     {
         try
         {
+            await SaveSettingsAsync().ConfigureAwait(ConfigureAwaitOptions.None);
             SetStatusMessage(false);
             _mouseService.Start(MoveX, MoveY, Duration, BackForth);
         }
@@ -104,6 +113,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
+            await SaveSettingsAsync().ConfigureAwait(ConfigureAwaitOptions.None);
             SetStatusMessage(false);
             Rectangle screenBounds = await _screenWindowService.GetScreenBoundsAsync().ConfigureAwait(ConfigureAwaitOptions.None);
             var mouseRealisticMovementDto = new MouseRealisticMovementDto(
@@ -166,6 +176,74 @@ public partial class MainWindowViewModel : ViewModelBase
                 StatusMessage = "Mouse movement started!";
                 StatusMessageColor = Brushes.Green;
                 break;
+        }
+    }
+    
+      private void LoadSettings()
+    {
+        try
+        {
+            var settings = _userSettingsService.GetSettings();
+            MoveX = settings.MoveX;
+            MoveY = settings.MoveY;
+            Duration = settings.Duration;
+            BackForth = settings.BackForth;
+            MinSpeed = settings.MinSpeed;
+            MaxSpeed = settings.MaxSpeed;
+            EnableStepPauses = settings.EnableStepPauses;
+            StepPauseMin = settings.StepPauseMin;
+            StepPauseMax = settings.StepPauseMax;
+            EnableRandomPauses = settings.EnableRandomPauses;
+            RandomPauseProbability = settings.RandomPauseProbability;
+            RandomPauseMin = settings.RandomPauseMin;
+            RandomPauseMax = settings.RandomPauseMax;
+            HorizontalBias = settings.HorizontalBias;
+            VerticalBias = settings.VerticalBias;
+            PaddingPercentage = settings.PaddingPercentage;
+            SelectedMouseMovementModeIndex = settings.SelectedMouseMovementModeIndex;
+            RandomSeed = settings.RandomSeed;
+            EnableUserInterventionDetection = settings.EnableUserInterventionDetection;
+            MovementThresholdInPixels = settings.MovementThresholdInPixels;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading settings");
+        }
+    }
+
+    private async Task SaveSettingsAsync()
+    {
+        try
+        {
+            var settings = new UserSettings
+            {
+                Id = 1,
+                MoveX = MoveX,
+                MoveY = MoveY,
+                Duration = Duration,
+                BackForth = BackForth,
+                MinSpeed = MinSpeed,
+                MaxSpeed = MaxSpeed,
+                EnableStepPauses = EnableStepPauses,
+                StepPauseMin = StepPauseMin,
+                StepPauseMax = StepPauseMax,
+                EnableRandomPauses = EnableRandomPauses,
+                RandomPauseProbability = RandomPauseProbability,
+                RandomPauseMin = RandomPauseMin,
+                RandomPauseMax = RandomPauseMax,
+                HorizontalBias = HorizontalBias,
+                VerticalBias = VerticalBias,
+                PaddingPercentage = PaddingPercentage,
+                SelectedMouseMovementModeIndex = SelectedMouseMovementModeIndex,
+                RandomSeed = RandomSeed,
+                EnableUserInterventionDetection = EnableUserInterventionDetection,
+                MovementThresholdInPixels = MovementThresholdInPixels
+            };
+            await _userSettingsService.SaveSettingsAsync(settings).ConfigureAwait(ConfigureAwaitOptions.None);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving settings");
         }
     }
 }

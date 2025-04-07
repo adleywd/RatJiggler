@@ -17,8 +17,7 @@
         WindowStartupLocation="CenterScreen"
         SizeToContent="WidthAndHeight"
         SystemDecorations="Full"
-        UseLayoutRounding="True"
-        RequestedThemeVariant="Light">
+        UseLayoutRounding="True">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>

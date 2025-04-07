@@ -2,11 +2,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using RatJiggler.Data;
+using RatJiggler.Data.Entities;
 using RatJiggler.Models;
 using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.Services;
-
 
 public class UserSettingsService : IUserSettingsService
 {
@@ -19,32 +19,86 @@ public class UserSettingsService : IUserSettingsService
 
     public UserSettings GetSettings()
     {
-        var settings =  _context.UserSettings.FirstOrDefault();
+        var entity = _context.UserSettings.FirstOrDefault();
         
-        if (settings != null)
+        if (entity != null)
         {
-            return settings;
+            return MapToUserSettings(entity);
         }
 
-        settings = new UserSettings();
-        _context.UserSettings.Add(settings);
+        entity = new UserSettingsEntity();
+        _context.UserSettings.Add(entity);
         _context.SaveChanges();
-        return settings;
+        return MapToUserSettings(entity);
     }
 
     public async Task SaveSettingsAsync(UserSettings settings)
     {
-        var existingSettings = await _context.UserSettings.FirstOrDefaultAsync().ConfigureAwait(ConfigureAwaitOptions.None);
-        if (existingSettings == null)
+        var entity = await _context.UserSettings.FirstOrDefaultAsync();
+        
+        if (entity == null)
         {
-            _context.UserSettings.Add(settings);
+            entity = new UserSettingsEntity();
+            MapToEntity(settings, entity);
+            _context.UserSettings.Add(entity);
         }
         else
         {
-            settings.Id = existingSettings?.Id ?? 0;
-            _context.Entry(existingSettings).CurrentValues.SetValues(settings);
-            _context.Entry(existingSettings).State = EntityState.Modified;
+            MapToEntity(settings, entity);
+            _context.Entry(entity).State = EntityState.Modified;
         }
-        await _context.SaveChangesAsync().ConfigureAwait(ConfigureAwaitOptions.None);
+        
+        await _context.SaveChangesAsync();
+    }
+
+    private static UserSettings MapToUserSettings(UserSettingsEntity entity)
+    {
+        return new UserSettings
+        {
+            MoveX = entity.MoveX,
+            MoveY = entity.MoveY,
+            Duration = entity.Duration,
+            BackForth = entity.BackForth,
+            MinSpeed = entity.MinSpeed,
+            MaxSpeed = entity.MaxSpeed,
+            EnableStepPauses = entity.EnableStepPauses,
+            StepPauseMin = entity.StepPauseMin,
+            StepPauseMax = entity.StepPauseMax,
+            EnableRandomPauses = entity.EnableRandomPauses,
+            RandomPauseProbability = entity.RandomPauseProbability,
+            RandomPauseMin = entity.RandomPauseMin,
+            RandomPauseMax = entity.RandomPauseMax,
+            HorizontalBias = entity.HorizontalBias,
+            VerticalBias = entity.VerticalBias,
+            PaddingPercentage = entity.PaddingPercentage,
+            SelectedMouseMovementModeIndex = entity.SelectedMouseMovementModeIndex,
+            RandomSeed = entity.RandomSeed,
+            EnableUserInterventionDetection = entity.EnableUserInterventionDetection,
+            MovementThresholdInPixels = entity.MovementThresholdInPixels
+        };
+    }
+
+    private static void MapToEntity(UserSettings model, UserSettingsEntity entity)
+    {
+        entity.MoveX = model.MoveX;
+        entity.MoveY = model.MoveY;
+        entity.Duration = model.Duration;
+        entity.BackForth = model.BackForth;
+        entity.MinSpeed = model.MinSpeed;
+        entity.MaxSpeed = model.MaxSpeed;
+        entity.EnableStepPauses = model.EnableStepPauses;
+        entity.StepPauseMin = model.StepPauseMin;
+        entity.StepPauseMax = model.StepPauseMax;
+        entity.EnableRandomPauses = model.EnableRandomPauses;
+        entity.RandomPauseProbability = model.RandomPauseProbability;
+        entity.RandomPauseMin = model.RandomPauseMin;
+        entity.RandomPauseMax = model.RandomPauseMax;
+        entity.HorizontalBias = model.HorizontalBias;
+        entity.VerticalBias = model.VerticalBias;
+        entity.PaddingPercentage = model.PaddingPercentage;
+        entity.SelectedMouseMovementModeIndex = model.SelectedMouseMovementModeIndex;
+        entity.RandomSeed = model.RandomSeed;
+        entity.EnableUserInterventionDetection = model.EnableUserInterventionDetection;
+        entity.MovementThresholdInPixels = model.MovementThresholdInPixels;
     }
 } 

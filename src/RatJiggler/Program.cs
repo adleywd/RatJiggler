@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.Versioning;
 using Avalonia;
 using Avalonia.Controls;
@@ -19,8 +20,6 @@ namespace RatJiggler;
 
 internal static class Program
 {
-    private const string LocalDbConnectionString = "Data Source=RatJiggler.Data";
-
     [STAThread]
     [SupportedOSPlatform("windows")]
     [SupportedOSPlatform("linux")]
@@ -36,14 +35,6 @@ internal static class Program
 
         hostBuilder.Services.AddLogging(builder => builder.AddConsole());
         
-        // Add database context
-        hostBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options
-                .UseSqlite(LocalDbConnectionString)
-#if DEBUG
-                .LogTo(Console.WriteLine, LogLevel.Information));
-#endif
-
         // Add settings service
         hostBuilder.Services.AddSingleton<ISettingsService, SettingsService>();
 
@@ -53,6 +44,10 @@ internal static class Program
         // Add mouse services
         if (OperatingSystem.IsWindowsVersionAtLeast(5, 0))
         {
+            // Configure Database
+            SetWindowsDatabaseConfiguration(hostBuilder);
+            
+            // Add mouse services
             hostBuilder.Services.AddSingleton<INormalMouseService, WindowsNormalMouseService>();
             hostBuilder.Services.AddSingleton<IRealisticMouseService, WindowsRealisticMouseService>();
         }
@@ -102,6 +97,37 @@ internal static class Program
         }
         
         appHost.RunAvaloniauiApplication(args);
+    }
+
+    private static void SetWindowsDatabaseConfiguration(HostApplicationBuilder hostBuilder)
+    {
+        string dbPath;
+
+        try
+        {
+            // Try to use AppData\Local\RatJiggler
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var appDataDir = Path.Combine(localAppData, "RatJiggler");
+            Directory.CreateDirectory(appDataDir); // Creates if it doesn't exist
+            dbPath = Path.Combine(appDataDir, "RatJiggler.Data");
+        
+            var testFile = Path.Combine(appDataDir, "data.tmp");
+            File.WriteAllText(testFile, "test");
+            File.Delete(testFile);
+        }
+        catch (Exception ex) // If any error (permissions, etc.), fall back to exe directory
+        {
+            dbPath = "RatJiggler.Data";
+            Console.WriteLine($"Failed to use AppData: {ex.Message}. Falling back to: {dbPath}");
+        }
+
+        hostBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options
+                    .UseSqlite($"Data Source={dbPath}")
+#if DEBUG
+                    .LogTo(Console.WriteLine, LogLevel.Information)
+#endif
+        );
     }
 
     private static AppBuilder ConfigAvaloniaAppBuilder(AppBuilder appBuilder) =>

@@ -5,7 +5,7 @@ namespace RatJiggler.Data;
 
 public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
-    private const string LocalDbConnectionString = "Data Source=RatJiggler.Data";
+    private const string LocalDbConnectionString = "Data Source=RatJiggler.db";
     public ApplicationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();

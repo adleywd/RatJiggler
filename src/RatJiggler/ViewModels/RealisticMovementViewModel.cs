@@ -1,12 +1,11 @@
 using System;
-using System.Drawing;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using RatJiggler.Data.Entities;
 using RatJiggler.MouseUtilities.Windows;
-using RatJiggler.Models;
 using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.ViewModels;
@@ -15,7 +14,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
 {
     private readonly ILogger<RealisticMovementViewModel> _logger;
     private readonly IRealisticMouseService _realisticMouseService;
-    private readonly IUserSettingsService _userSettingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IScreenWindowService _screenWindowService;
     private readonly IStatusMessageService _statusMessageService;
 
@@ -67,13 +66,13 @@ public partial class RealisticMovementViewModel : ViewModelBase
     public RealisticMovementViewModel(
         ILogger<RealisticMovementViewModel> logger,
         IRealisticMouseService realisticMouseService,
-        IUserSettingsService userSettingsService,
+        ISettingsService settingsService,
         IScreenWindowService screenWindowService,
         IStatusMessageService statusMessageService)
     {
         _logger = logger;
         _realisticMouseService = realisticMouseService;
-        _userSettingsService = userSettingsService;
+        _settingsService = settingsService;
         _screenWindowService = screenWindowService;
         _statusMessageService = statusMessageService;
 
@@ -84,7 +83,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
     {
         try
         {
-            var settings = _userSettingsService.GetSettings();
+            var settings = _settingsService.GetRealisticMovementSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             MinSpeed = settings.MinSpeed;
             MaxSpeed = settings.MaxSpeed;
             EnableStepPauses = settings.EnableStepPauses;
@@ -103,7 +102,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading settings");
+            _logger.LogError(ex, "Error loading realistic movement settings");
             _statusMessageService.SetStatusMessage("Error loading settings", "Red");
         }
     }
@@ -113,7 +112,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
     {
         try
         {
-            var screenBounds = await _screenWindowService.GetScreenBoundsAsync();
+            var screenBounds = await _screenWindowService.GetScreenBoundsAsync().ConfigureAwait(false);
             var movementDto = new MouseRealisticMovementDto
             {
                 ScreenBounds = screenBounds,
@@ -164,7 +163,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
     {
         try
         {
-            var settings = new UserSettings
+            var settings = new RealisticMovementSettings
             {
                 MinSpeed = MinSpeed,
                 MaxSpeed = MaxSpeed,
@@ -183,7 +182,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
                 MovementThresholdInPixels = MovementThresholdInPixels
             };
 
-            await _userSettingsService.SaveSettingsAsync(settings).ConfigureAwait(false);
+            await _settingsService.SaveRealisticMovementSettingsAsync(settings).ConfigureAwait(false);
             _statusMessageService.SetStatusMessage("Settings saved successfully", "Green");
         }
         catch (Exception ex)
@@ -194,23 +193,18 @@ public partial class RealisticMovementViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void ResetToDefaults()
+    private async Task RestoreDefaults()
     {
-        MinSpeed = 3;
-        MaxSpeed = 7;
-        EnableStepPauses = true;
-        StepPauseMin = 20;
-        StepPauseMax = 50;
-        EnableRandomPauses = true;
-        RandomPauseProbability = 10;
-        RandomPauseMin = 100;
-        RandomPauseMax = 500;
-        HorizontalBias = 0;
-        VerticalBias = 0;
-        PaddingPercentage = 0.1f;
-        RandomSeed = null;
-        EnableUserInterventionDetection = true;
-        MovementThresholdInPixels = 10;
-        _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+        try
+        {
+            await _settingsService.RestoreDefaultsAsync().ConfigureAwait(false);
+            LoadSettings();
+            _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resetting settings");
+            _statusMessageService.SetStatusMessage("Error resetting settings", "Red");
+        }
     }
 } 

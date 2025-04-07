@@ -6,6 +6,9 @@ namespace RatJiggler.Data;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<UserSettingsEntity> UserSettings { get; set; }
+    public DbSet<NormalMovementSettings> NormalMovementSettings { get; set; } = null!;
+    public DbSet<RealisticMovementSettings> RealisticMovementSettings { get; set; } = null!;
+    public DbSet<ApplicationSettings> ApplicationSettings { get; set; } = null!;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -96,5 +99,18 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<UserSettingsEntity>()
             .Property(u => u.MovementThresholdInPixels)
             .HasDefaultValue(10);
+
+        // Seed initial settings
+        modelBuilder.Entity<NormalMovementSettings>().HasData(
+            new NormalMovementSettings { Id = 1 }
+        );
+
+        modelBuilder.Entity<RealisticMovementSettings>().HasData(
+            new RealisticMovementSettings { Id = 1 }
+        );
+
+        modelBuilder.Entity<ApplicationSettings>().HasData(
+            new ApplicationSettings { Id = 1 }
+        );
     }
 } 

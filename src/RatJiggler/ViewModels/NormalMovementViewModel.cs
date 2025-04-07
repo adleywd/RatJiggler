@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using RatJiggler.Models;
+using RatJiggler.Data.Entities;
 using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.ViewModels;
@@ -12,7 +12,7 @@ public partial class NormalMovementViewModel : ViewModelBase
 {
     private readonly ILogger<NormalMovementViewModel> _logger;
     private readonly INormalMouseService _normalMouseService;
-    private readonly IUserSettingsService _userSettingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IStatusMessageService _statusMessageService;
 
     [ObservableProperty]
@@ -30,12 +30,12 @@ public partial class NormalMovementViewModel : ViewModelBase
     public NormalMovementViewModel(
         ILogger<NormalMovementViewModel> logger,
         INormalMouseService normalMouseService,
-        IUserSettingsService userSettingsService,
+        ISettingsService settingsService,
         IStatusMessageService statusMessageService)
     {
         _logger = logger;
         _normalMouseService = normalMouseService;
-        _userSettingsService = userSettingsService;
+        _settingsService = settingsService;
         _statusMessageService = statusMessageService;
 
         LoadSettings();
@@ -45,7 +45,7 @@ public partial class NormalMovementViewModel : ViewModelBase
     {
         try
         {
-            var settings = _userSettingsService.GetSettings();
+            var settings = _settingsService.GetNormalMovementSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             MoveX = settings.MoveX;
             MoveY = settings.MoveY;
             Duration = settings.Duration;
@@ -53,7 +53,7 @@ public partial class NormalMovementViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading settings");
+            _logger.LogError(ex, "Error loading normal movement settings");
             _statusMessageService.SetStatusMessage("Error loading settings", "Red");
         }
     }
@@ -93,7 +93,7 @@ public partial class NormalMovementViewModel : ViewModelBase
     {
         try
         {
-            var settings = new UserSettings
+            var settings = new NormalMovementSettings
             {
                 MoveX = MoveX,
                 MoveY = MoveY,
@@ -101,7 +101,7 @@ public partial class NormalMovementViewModel : ViewModelBase
                 BackAndForth = BackAndForth
             };
 
-            await _userSettingsService.SaveSettingsAsync(settings).ConfigureAwait(false);
+            await _settingsService.SaveNormalMovementSettingsAsync(settings).ConfigureAwait(false);
             _statusMessageService.SetStatusMessage("Settings saved successfully", "Green");
         }
         catch (Exception ex)
@@ -112,12 +112,18 @@ public partial class NormalMovementViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void ResetToDefaults()
+    private async Task RestoreDefaults()
     {
-        MoveX = 50;
-        MoveY = 0;
-        Duration = 60;
-        BackAndForth = true;
-        _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+        try
+        {
+            await _settingsService.RestoreDefaultsAsync().ConfigureAwait(false);
+            LoadSettings();
+            _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resetting settings");
+            _statusMessageService.SetStatusMessage("Error resetting settings", "Red");
+        }
     }
 } 

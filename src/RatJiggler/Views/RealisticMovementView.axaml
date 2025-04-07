@@ -139,6 +139,19 @@
                     </Grid>
                 </StackPanel>
 
+                <!-- Settings Buttons -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="10"
+                            Margin="0,20,0,0">
+                    <Button Command="{Binding SaveSettingsCommand}"
+                            Content="Save Settings"
+                            Width="120"/>
+                    <Button Command="{Binding RestoreDefaultsCommand}"
+                            Content="Restore Defaults"
+                            Width="120"/>
+                </StackPanel>
+                
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"
@@ -163,6 +176,7 @@
                         </Button.Content>
                     </Button>
                 </StackPanel>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

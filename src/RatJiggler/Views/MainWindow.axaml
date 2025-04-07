@@ -36,14 +36,15 @@
 
     <Grid Margin="15" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />   <!-- Tab Control -->
+            <RowDefinition Height="*" />    <!-- Tab Control -->
             <RowDefinition Height="Auto" /> <!-- Status Message -->
         </Grid.RowDefinitions>
 
         <!-- Tab Control for Modes -->
         <TabControl Grid.Row="0"
                     Margin="0,0,0,20"
-                    BorderThickness="1">
+                    BorderThickness="1"
+                    SelectedIndex="{Binding SelectedTabIndex}">
             
             <!-- Normal Movement Tab -->
             <TabItem Header="Normal Movement"

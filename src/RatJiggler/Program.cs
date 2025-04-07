@@ -44,6 +44,7 @@ internal static class Program
 
         // Add user settings service
         hostBuilder.Services.AddSingleton<IUserSettingsService, UserSettingsService>();
+        hostBuilder.Services.AddSingleton<ISettingsService, SettingsService>();
 
         // Add services for the screen window, which is used to get the screen bounds
         hostBuilder.Services.AddSingleton<IScreenWindowService>(_ => new ScreenWindowService(new Window()));

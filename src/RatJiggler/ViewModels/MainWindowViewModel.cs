@@ -2,9 +2,8 @@
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using RatJiggler.Models;
+using RatJiggler.Data.Entities;
 using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.ViewModels;
@@ -12,7 +11,7 @@ namespace RatJiggler.ViewModels;
 public partial class MainWindowViewModel : ViewModelBase
 {
     private readonly ILogger<MainWindowViewModel> _logger;
-    private readonly IUserSettingsService _userSettingsService;
+    private readonly ISettingsService _settingsService;
     private readonly IStatusMessageService _statusMessageService;
 
     [ObservableProperty]
@@ -21,24 +20,43 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _statusMessageColor = "Black";
 
+    [ObservableProperty]
+    private int _selectedTabIndex;
+
     public NormalMovementViewModel NormalMovementViewModel { get; }
     public RealisticMovementViewModel RealisticMovementViewModel { get; }
 
     public MainWindowViewModel(
         ILogger<MainWindowViewModel> logger,
-        IUserSettingsService userSettingsService,
+        ISettingsService settingsService,
         IStatusMessageService statusMessageService,
         NormalMovementViewModel normalMovementViewModel,
         RealisticMovementViewModel realisticMovementViewModel)
     {
         _logger = logger;
-        _userSettingsService = userSettingsService;
+        _settingsService = settingsService;
         _statusMessageService = statusMessageService;
 
         _statusMessageService.StatusMessageChanged += OnStatusMessageChanged;
 
         NormalMovementViewModel = normalMovementViewModel;
         RealisticMovementViewModel = realisticMovementViewModel;
+
+        LoadSettings();
+    }
+
+    private void LoadSettings()
+    {
+        try
+        {
+            var appSettings = _settingsService.GetApplicationSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            SelectedTabIndex = appSettings.SelectedTabIndex;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading application settings");
+            _statusMessageService.SetStatusMessage("Error loading settings", "Red");
+        }
     }
 
     private void OnStatusMessageChanged(object? sender, StatusMessageEventArgs e)
@@ -50,79 +68,26 @@ public partial class MainWindowViewModel : ViewModelBase
         });
     }
 
-    [RelayCommand]
-    private async Task SaveSettings()
+    partial void OnSelectedTabIndexChanged(int value)
     {
-        try
-        {
-            var settings = new UserSettings
-            {
-                MoveX = 50,
-                MoveY = 0,
-                Duration = 60,
-                BackAndForth = true,
-                MinSpeed = 3,
-                MaxSpeed = 7,
-                EnableStepPauses = true,
-                StepPauseMin = 20,
-                StepPauseMax = 50,
-                EnableRandomPauses = true,
-                RandomPauseProbability = 10,
-                RandomPauseMin = 100,
-                RandomPauseMax = 500,
-                HorizontalBias = 0,
-                VerticalBias = 0,
-                PaddingPercentage = 0.1f,
-                RandomSeed = null,
-                EnableUserInterventionDetection = true,
-                MovementThresholdInPixels = 10
-            };
-
-            await _userSettingsService.SaveSettingsAsync(settings);
-            _statusMessageService.SetStatusMessage("Settings saved successfully", "Green");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error saving settings");
-            _statusMessageService.SetStatusMessage("Error saving settings", "Red");
-        }
+        SaveSelectedTabAsync();
     }
 
-    [RelayCommand]
-    private async Task ResetToDefaults()
+    private async void SaveSelectedTabAsync()
     {
         try
         {
-            var settings = new UserSettings
+            var appSettings = new ApplicationSettings
             {
-                MoveX = 50,
-                MoveY = 0,
-                Duration = 60,
-                BackAndForth = true,
-                MinSpeed = 3,
-                MaxSpeed = 7,
-                EnableStepPauses = true,
-                StepPauseMin = 20,
-                StepPauseMax = 50,
-                EnableRandomPauses = true,
-                RandomPauseProbability = 10,
-                RandomPauseMin = 100,
-                RandomPauseMax = 500,
-                HorizontalBias = 0,
-                VerticalBias = 0,
-                PaddingPercentage = 0.1f,
-                RandomSeed = null,
-                EnableUserInterventionDetection = true,
-                MovementThresholdInPixels = 10
+                SelectedTabIndex = SelectedTabIndex
             };
 
-            await _userSettingsService.SaveSettingsAsync(settings).ConfigureAwait(false);
-            _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+            await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error resetting settings");
-            _statusMessageService.SetStatusMessage("Error resetting settings", "Red");
+            _logger.LogError(ex, "Error saving selected tab");
+            _statusMessageService.SetStatusMessage("Error saving selected tab", "Red");
         }
     }
 }

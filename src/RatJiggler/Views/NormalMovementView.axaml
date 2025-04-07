@@ -13,9 +13,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Movement Inputs -->
+        <!-- Movement Settings -->
         <StackPanel Grid.Row="0" Spacing="10">
-            <TextBlock Text="Movement Configuration"
+            <TextBlock Text="Mouse Movement Settings"
                        FontSize="16"
                        FontWeight="Bold"
                        Foreground="MediumPurple"/>
@@ -31,24 +31,27 @@
                 </Grid.RowDefinitions>
 
                 <!-- X and Y Movement -->
-                <Label Content="X Movement (pixels):"
+                <Label Content="ⓘ Horizontal movement amount:"
                        Grid.Row="0" Grid.Column="0"
-                       Margin="5" HorizontalAlignment="Right" />
+                       Margin="5" HorizontalAlignment="Right" 
+                       ToolTip.Tip="How far left/right the mouse will move (in pixels)"/>
                 <TextBox Text="{Binding MoveX}" Width="100"
                          Grid.Row="0" Grid.Column="1"
                          Margin="5" HorizontalAlignment="Left" />
 
-                <Label Content="Y Movement (pixels):"
+                <Label Content="ⓘ Vertical movement amount:"
                        Grid.Row="1" Grid.Column="0"
-                       Margin="5" HorizontalAlignment="Right" />
+                       Margin="5" HorizontalAlignment="Right" 
+                       ToolTip.Tip="How far up/down the mouse will move (in pixels)"/>
                 <TextBox Text="{Binding MoveY}" Width="100"
                          Grid.Row="1" Grid.Column="1"
                          Margin="5" HorizontalAlignment="Left" />
 
                 <!-- Duration -->
-                <Label Content="Duration (seconds):"
+                <Label Content="ⓘ Time for each movement:"
                        Grid.Row="2" Grid.Column="0"
-                       Margin="5" HorizontalAlignment="Right" />
+                       Margin="5" HorizontalAlignment="Right" 
+                       ToolTip.Tip="How long it takes to complete one movement (in seconds)"/>
                 <TextBox Text="{Binding Duration}" Width="100"
                          Grid.Row="2" Grid.Column="1"
                          Margin="5" HorizontalAlignment="Left" />
@@ -57,11 +60,12 @@
 
         <!-- Back/Forth Toggle -->
         <CheckBox IsChecked="{Binding BackAndForth}"
-                  Content="Enable Back and Forth Movement"
+                  Content="ⓘ Alternate movement directions"
                   Grid.Row="1"
                   Margin="5"
-                  HorizontalAlignment="Left" />
-        
+                  HorizontalAlignment="Left"
+                  ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction."/>
+
         <!-- Settings Buttons -->
         <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
@@ -70,10 +74,12 @@
                     Margin="0,20,0,0">
             <Button Command="{Binding SaveSettingsCommand}"
                     Content="Save Settings"
-                    Width="120"/>
+                    Width="120"
+                    ToolTip.Tip="Save your current settings for next time"/>
             <Button Command="{Binding RestoreDefaultsCommand}"
-                    Content="Restore Defaults"
-                    Width="120"/>
+                    Content="Reset to Defaults"
+                    Width="120"
+                    ToolTip.Tip="Restore all settings to their original values"/>
         </StackPanel>
         
         <!-- Movement Control Buttons -->
@@ -85,9 +91,9 @@
             <Button Width="200" Command="{Binding StartMovementCommand}">
                 <Button.Content>
                     <TextBlock TextAlignment="Center">
-                        <Run Text="Start Mouse Movement" />
+                        <Run Text="Start Moving Mouse" />
                         <LineBreak />
-                        <Run Text="(Ctrl + R)" />
+                        <Run Text="(Press Ctrl + R)" />
                     </TextBlock>
                 </Button.Content>
             </Button>
@@ -96,11 +102,10 @@
                     <TextBlock TextAlignment="Center">
                         <Run Text="Stop Mouse Movement" />
                         <LineBreak />
-                        <Run Text="(Ctrl + C)" />
+                        <Run Text="(Press Ctrl + C)" />
                     </TextBlock>
                 </Button.Content>
             </Button>
         </StackPanel>
-
     </Grid>
 </UserControl>

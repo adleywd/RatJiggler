@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using RatJiggler.Data.Entities;
 using RatJiggler.Services.Interfaces;
@@ -88,6 +89,48 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             _logger.LogError(ex, "Error saving selected tab");
             _statusMessageService.SetStatusMessage("Error saving selected tab", "Red");
+        }
+    }
+
+    [RelayCommand]
+    private void StartMouseMovementByHotkey()
+    {
+        try
+        {
+            if (SelectedTabIndex == 0)
+            {
+                NormalMovementViewModel.StartMovementCommand.Execute(null);
+            }
+            else
+            {
+                RealisticMovementViewModel.StartMovementCommand.Execute(null);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error executing start movement hotkey");
+            _statusMessageService.SetStatusMessage("Error starting movement", "Red");
+        }
+    }
+
+    [RelayCommand]
+    private void StopMovement()
+    {
+        try
+        {
+            if (SelectedTabIndex == 0)
+            {
+                NormalMovementViewModel.StopMovementCommand.Execute(null);
+            }
+            else
+            {
+                RealisticMovementViewModel.StopMovementCommand.Execute(null);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error executing stop movement hotkey");
+            _statusMessageService.SetStatusMessage("Error stopping movement", "Red");
         }
     }
 }

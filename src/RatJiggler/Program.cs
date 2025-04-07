@@ -40,12 +40,11 @@ internal static class Program
         hostBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
             options
                 .UseSqlite(LocalDbConnectionString)
-#if  DEBUG
+#if DEBUG
                 .LogTo(Console.WriteLine, LogLevel.Information));
 #endif
 
-        // Add user settings service
-        hostBuilder.Services.AddSingleton<IUserSettingsService, UserSettingsService>();
+        // Add settings service
         hostBuilder.Services.AddSingleton<ISettingsService, SettingsService>();
 
         // Add services for the screen window, which is used to get the screen bounds

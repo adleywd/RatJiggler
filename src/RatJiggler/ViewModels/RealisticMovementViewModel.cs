@@ -149,7 +149,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
         try
         {
             _realisticMouseService.Stop();
-            _statusMessageService.SetStatusMessage("Mouse movement stopped", "Black");
+            _statusMessageService.SetStatusMessage("Mouse movement stopped", "Red");
         }
         catch (Exception ex)
         {

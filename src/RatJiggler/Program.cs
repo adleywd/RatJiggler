@@ -40,7 +40,9 @@ internal static class Program
         hostBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
             options
                 .UseSqlite(LocalDbConnectionString)
+#if  DEBUG
                 .LogTo(Console.WriteLine, LogLevel.Information));
+#endif
 
         // Add user settings service
         hostBuilder.Services.AddSingleton<IUserSettingsService, UserSettingsService>();
@@ -86,7 +88,18 @@ internal static class Program
         using (var scope = appHost.Services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.EnsureCreated();
+            var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("DatabaseStartup");
+            try
+            {
+                logger.LogInformation("Applying database migrations...");
+                dbContext.Database.Migrate();
+                logger.LogInformation("Database migrations applied successfully.");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while applying database migrations.");
+                throw;
+            }
         }
         
         appHost.RunAvaloniauiApplication(args);

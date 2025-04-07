@@ -79,7 +79,7 @@ public partial class NormalMovementViewModel : ViewModelBase
         try
         {
             _normalMouseService.Stop();
-            _statusMessageService.SetStatusMessage("Mouse movement stopped", "Black");
+            _statusMessageService.SetStatusMessage("Mouse movement stopped", "Red");
         }
         catch (Exception ex)
         {

@@ -63,7 +63,7 @@
                   HorizontalAlignment="Left" />
         
         <!-- Settings Buttons -->
-        <StackPanel Grid.Row="3"
+        <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Spacing="10"
@@ -76,8 +76,8 @@
                     Width="120"/>
         </StackPanel>
         
-        <!-- Buttons -->
-        <StackPanel Grid.Row="2"
+        <!-- Movement Control Buttons -->
+        <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Spacing="10"

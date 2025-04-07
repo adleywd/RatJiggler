@@ -18,7 +18,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private string _statusMessage = string.Empty;
 
     [ObservableProperty]
-    private string _statusMessageColor = "Black";
+    private string _statusMessageColor = "Purple";
 
     [ObservableProperty]
     private int _selectedTabIndex;

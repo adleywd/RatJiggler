@@ -45,6 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\RatJiggler.MouseUtilities.Linux\RatJiggler.MouseUtilities.Linux.csproj" />
       <ProjectReference Include="..\RatJiggler.MouseUtilities.Windows\RatJiggler.MouseUtilities.Windows.csproj" />
       <ProjectReference Include="..\RatJiggler.Data\RatJiggler.Data.csproj" />
     </ItemGroup>

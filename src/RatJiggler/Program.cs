@@ -41,25 +41,8 @@ internal static class Program
         // Add services for the screen window, which is used to get the screen bounds
         hostBuilder.Services.AddSingleton<IScreenWindowService>(_ => new ScreenWindowService(new Window()));
         
-        // Add mouse services
-        if (OperatingSystem.IsWindowsVersionAtLeast(5, 0))
-        {
-            // Configure Database
-            SetWindowsDatabaseConfiguration(hostBuilder);
-            
-            // Add mouse services
-            hostBuilder.Services.AddSingleton<INormalMouseService, WindowsNormalMouseService>();
-            hostBuilder.Services.AddSingleton<IRealisticMouseService, WindowsRealisticMouseService>();
-        }
-        else if (OperatingSystem.IsLinux())
-        {
-            hostBuilder.Services.AddSingleton<INormalMouseService, LinuxMouseService>();
-            hostBuilder.Services.AddSingleton<IRealisticMouseService, LinuxMouseService>();
-        }
-        else
-        {
-            throw new PlatformNotSupportedException("Unsupported operating system.");
-        }
+        // Configure platform-specific services
+        SetPlatformDependencies(hostBuilder);
 
         // Add status message service
         hostBuilder.Services.AddSingleton<IStatusMessageService, StatusMessageService>();
@@ -99,45 +82,45 @@ internal static class Program
         appHost.RunAvaloniauiApplication(args);
     }
 
-    private static void SetWindowsDatabaseConfiguration(HostApplicationBuilder hostBuilder)
+    private static void SetPlatformDependencies(HostApplicationBuilder hostBuilder)
     {
-        string dbPath;
-
-        try
+        const string ratJigglerPath = "RatJiggler";
+        const string dbName = "RatJiggler.Data";
+        if (OperatingSystem.IsWindowsVersionAtLeast(5))
         {
-            // Try to use AppData\Local\RatJiggler
-            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var appDataDir = Path.Combine(localAppData, "RatJiggler");
-            Directory.CreateDirectory(appDataDir); // Creates if it doesn't exist
-            dbPath = Path.Combine(appDataDir, "RatJiggler.Data");
-        
-            var testFile = Path.Combine(appDataDir, "data.tmp");
-            File.WriteAllText(testFile, "test");
-            File.Delete(testFile);
+            // Configure Database for Windows
+            var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var dbPath = Path.Combine(appDataPath, ratJigglerPath, dbName);
+            Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+            hostBuilder.Services.AddDbContext<ApplicationDbContext>(options => 
+                options.UseSqlite($"Data Source={dbPath}"));
+            
+            // Add Windows mouse services
+            hostBuilder.Services.AddSingleton<INormalMouseService, WindowsNormalMouseService>();
+            hostBuilder.Services.AddSingleton<IRealisticMouseService, WindowsRealisticMouseService>();
         }
-        catch (Exception ex) // If any error (permissions, etc.), fall back to exe directory
+        else if (OperatingSystem.IsLinux())
         {
-            dbPath = "RatJiggler.Data";
-            Console.WriteLine($"Failed to use AppData: {ex.Message}. Falling back to: {dbPath}");
+            // Configure Database for Linux
+            var homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            var dataPath = Path.Combine(homePath, ".local", "share", ratJigglerPath);
+            Directory.CreateDirectory(dataPath);
+            var dbPath = Path.Combine(dataPath, dbName);
+            hostBuilder.Services.AddDbContext<ApplicationDbContext>(options => 
+                options.UseSqlite($"Data Source={dbPath}"));
+            
+            // Add Linux mouse services
+            hostBuilder.Services.AddSingleton<INormalMouseService, LinuxNormalMouseService>();
+            hostBuilder.Services.AddSingleton<IRealisticMouseService, LinuxRealisticMouseService>();
         }
-
-        hostBuilder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options
-                    .UseSqlite($"Data Source={dbPath}")
-#if DEBUG
-                    .LogTo(Console.WriteLine, LogLevel.Information)
-#endif
-        );
+        else
+        {
+            throw new PlatformNotSupportedException("Unsupported operating system.");
+        }
     }
 
     private static AppBuilder ConfigAvaloniaAppBuilder(AppBuilder appBuilder) =>
         appBuilder.UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
-
-    // Used to display the app in design mode
-    // public static AppBuilder BuildAvaloniaApp() =>
-    //     AppBuilder.Configure<App>()
-    //         .UsePlatformDetect()
-    //         .LogToTrace();
 }

@@ -63,6 +63,9 @@ public partial class RealisticMovementViewModel : ViewModelBase
     [ObservableProperty]
     private int _movementThresholdInPixels = 10;
 
+    [ObservableProperty]
+    private bool _isRunning = false;
+
     public RealisticMovementViewModel(
         ILogger<RealisticMovementViewModel> logger,
         IRealisticMouseService realisticMouseService,
@@ -135,6 +138,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
 
             _realisticMouseService.StartRealistic(movementDto, () => Dispatcher.UIThread.InvokeAsync(StopMovement));
             _statusMessageService.SetStatusMessage("Realistic mouse movement started", "Green");
+            IsRunning = true;
         }
         catch (Exception ex)
         {
@@ -150,6 +154,7 @@ public partial class RealisticMovementViewModel : ViewModelBase
         {
             _realisticMouseService.Stop();
             _statusMessageService.SetStatusMessage("Mouse movement stopped", "Red");
+            IsRunning = false;
         }
         catch (Exception ex)
         {

@@ -26,6 +26,9 @@ public partial class NormalMovementViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _backAndForth = true;
+    
+    [ObservableProperty]
+    private bool _isRunning = false;
 
     public NormalMovementViewModel(
         ILogger<NormalMovementViewModel> logger,
@@ -65,6 +68,7 @@ public partial class NormalMovementViewModel : ViewModelBase
         {
             _normalMouseService.Start(MoveX, MoveY, Duration, BackAndForth);
             _statusMessageService.SetStatusMessage("Normal mouse movement started", "Green");
+            IsRunning = true;
         }
         catch (Exception ex)
         {
@@ -80,6 +84,7 @@ public partial class NormalMovementViewModel : ViewModelBase
         {
             _normalMouseService.Stop();
             _statusMessageService.SetStatusMessage("Mouse movement stopped", "Red");
+            IsRunning = false;
         }
         catch (Exception ex)
         {

@@ -111,6 +111,7 @@ public class SettingsService : ISettingsService
         else
         {
             existingSettings.SelectedTabIndex = settings.SelectedTabIndex;
+            existingSettings.AutoStartMovement = settings.AutoStartMovement;
         }
         await dbContext.SaveChangesAsync();
     }

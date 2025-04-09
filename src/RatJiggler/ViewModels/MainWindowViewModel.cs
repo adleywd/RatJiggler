@@ -24,6 +24,32 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private int _selectedTabIndex;
 
+    [ObservableProperty]
+    private bool _autoStartMovement;
+
+    partial void OnAutoStartMovementChanged(bool value)
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                var appSettings = new ApplicationSettings
+                {
+                    SelectedTabIndex = SelectedTabIndex,
+                    AutoStartMovement = value
+                };
+
+                await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);
+                _logger.LogInformation("Auto start movement setting saved: {Value}", value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving auto start movement setting");
+                _statusMessageService.SetStatusMessage("Error saving settings", "Red");
+            }
+        });
+    }
+
     public NormalMovementViewModel NormalMovementViewModel { get; }
     public RealisticMovementViewModel RealisticMovementViewModel { get; }
 
@@ -44,6 +70,11 @@ public partial class MainWindowViewModel : ViewModelBase
         RealisticMovementViewModel = realisticMovementViewModel;
 
         LoadSettings();
+
+        if (AutoStartMovement)
+        {
+            StartMouseMovementByHotkeyCommand.Execute(null);
+        }
     }
 
     private void LoadSettings()
@@ -52,6 +83,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var appSettings = _settingsService.GetApplicationSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             SelectedTabIndex = appSettings.SelectedTabIndex;
+            AutoStartMovement = appSettings.AutoStartMovement;
         }
         catch (Exception ex)
         {
@@ -71,6 +103,22 @@ public partial class MainWindowViewModel : ViewModelBase
 
     partial void OnSelectedTabIndexChanged(int value)
     {
+        // Stop any running movements when changing tabs
+        if (value == 0) // Switched to Normal movement tab
+        {
+            if (RealisticMovementViewModel.IsRunning)
+            {
+                RealisticMovementViewModel.StopMovementCommand.Execute(null);
+            }
+        }
+        else // Switched to Realistic movement tab
+        {
+            if (NormalMovementViewModel.IsRunning)
+            {
+                NormalMovementViewModel.StopMovementCommand.Execute(null);
+            }
+        }
+        
         SaveSelectedTabAsync();
     }
 
@@ -80,7 +128,8 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var appSettings = new ApplicationSettings
             {
-                SelectedTabIndex = SelectedTabIndex
+                SelectedTabIndex = SelectedTabIndex,
+                AutoStartMovement = AutoStartMovement
             };
 
             await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);

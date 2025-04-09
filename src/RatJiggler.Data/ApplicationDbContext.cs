@@ -109,6 +109,10 @@ public class ApplicationDbContext : DbContext
             new RealisticMovementSettings { Id = 1 }
         );
 
+        modelBuilder.Entity<ApplicationSettings>()
+            .Property(a => a.AutoStartMovement)
+            .HasDefaultValue(false);
+
         modelBuilder.Entity<ApplicationSettings>().HasData(
             new ApplicationSettings { Id = 1 }
         );

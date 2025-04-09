@@ -17,25 +17,25 @@ public class SettingsService : ISettingsService
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    public async Task<NormalMovementSettings> GetNormalMovementSettingsAsync()
+    public async Task<SimpleMovementSettings> GetSimpleMovementSettingsAsync()
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         
-        var settings = await dbContext.NormalMovementSettings.FirstOrDefaultAsync();
-        return settings ?? new NormalMovementSettings { Id = 1 };
+        var settings = await dbContext.SimpleMovementSettings.FirstOrDefaultAsync();
+        return settings ?? new SimpleMovementSettings { Id = 1 };
     }
 
-    public async Task SaveNormalMovementSettingsAsync(NormalMovementSettings settings)
+    public async Task SaveSimpleMovementSettingsAsync(SimpleMovementSettings settings)
     {
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var existingSettings = await dbContext.NormalMovementSettings.FirstOrDefaultAsync();
+        var existingSettings = await dbContext.SimpleMovementSettings.FirstOrDefaultAsync();
         if (existingSettings == null)
         {
             settings.Id = 1;
-            dbContext.NormalMovementSettings.Add(settings);
+            dbContext.SimpleMovementSettings.Add(settings);
         }
         else
         {
@@ -122,11 +122,11 @@ public class SettingsService : ISettingsService
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         // Clear tables
-        dbContext.NormalMovementSettings.RemoveRange(dbContext.NormalMovementSettings);
+        dbContext.SimpleMovementSettings.RemoveRange(dbContext.SimpleMovementSettings);
         dbContext.RealisticMovementSettings.RemoveRange(dbContext.RealisticMovementSettings);
         dbContext.ApplicationSettings.RemoveRange(dbContext.ApplicationSettings);
         
-        await dbContext.NormalMovementSettings.AddAsync(new NormalMovementSettings { Id = 1 });
+        await dbContext.SimpleMovementSettings.AddAsync(new SimpleMovementSettings { Id = 1 });
         await dbContext.RealisticMovementSettings.AddAsync(new RealisticMovementSettings { Id = 1 });
         await dbContext.ApplicationSettings.AddAsync(new ApplicationSettings { Id = 1 });
         

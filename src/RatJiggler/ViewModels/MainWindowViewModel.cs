@@ -50,14 +50,14 @@ public partial class MainWindowViewModel : ViewModelBase
         });
     }
 
-    public NormalMovementViewModel NormalMovementViewModel { get; }
+    public SimpleMovementViewModel SimpleMovementViewModel { get; }
     public RealisticMovementViewModel RealisticMovementViewModel { get; }
 
     public MainWindowViewModel(
         ILogger<MainWindowViewModel> logger,
         ISettingsService settingsService,
         IStatusMessageService statusMessageService,
-        NormalMovementViewModel normalMovementViewModel,
+        SimpleMovementViewModel simpleMovementViewModel,
         RealisticMovementViewModel realisticMovementViewModel)
     {
         _logger = logger;
@@ -66,7 +66,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _statusMessageService.StatusMessageChanged += OnStatusMessageChanged;
 
-        NormalMovementViewModel = normalMovementViewModel;
+        SimpleMovementViewModel = simpleMovementViewModel;
         RealisticMovementViewModel = realisticMovementViewModel;
 
         LoadSettings();
@@ -104,7 +104,7 @@ public partial class MainWindowViewModel : ViewModelBase
     partial void OnSelectedTabIndexChanged(int value)
     {
         // Stop any running movements when changing tabs
-        if (value == 0) // Switched to Normal movement tab
+        if (value == 0) // Switched to Simple movement tab
         {
             if (RealisticMovementViewModel.IsRunning)
             {
@@ -113,9 +113,9 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         else // Switched to Realistic movement tab
         {
-            if (NormalMovementViewModel.IsRunning)
+            if (SimpleMovementViewModel.IsRunning)
             {
-                NormalMovementViewModel.StopMovementCommand.Execute(null);
+                SimpleMovementViewModel.StopMovementCommand.Execute(null);
             }
         }
         
@@ -148,7 +148,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             if (SelectedTabIndex == 0)
             {
-                NormalMovementViewModel.StartMovementCommand.Execute(null);
+                SimpleMovementViewModel.StartMovementCommand.Execute(null);
             }
             else
             {
@@ -169,7 +169,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             if (SelectedTabIndex == 0)
             {
-                NormalMovementViewModel.StopMovementCommand.Execute(null);
+                SimpleMovementViewModel.StopMovementCommand.Execute(null);
             }
             else
             {

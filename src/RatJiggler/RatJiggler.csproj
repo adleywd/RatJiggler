@@ -42,6 +42,9 @@
         <DependentUpon>AppWithServiceProvider.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Views\SimpleMovementView.axaml.cs">
+        <DependentUpon>SimpleMovementView.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

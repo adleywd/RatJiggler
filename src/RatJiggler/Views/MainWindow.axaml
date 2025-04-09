@@ -48,10 +48,10 @@
                     BorderThickness="1"
                     SelectedIndex="{Binding SelectedTabIndex}">
             
-            <!-- Normal Movement Tab -->
-            <TabItem Header="Normal Movement"
+            <!-- Simple Movement Tab -->
+            <TabItem Header="Simple Movement"
                      Cursor="Hand">
-                <local:NormalMovementView DataContext="{Binding NormalMovementViewModel}" />
+                <local:SimpleMovementView DataContext="{Binding SimpleMovementViewModel}" />
             </TabItem>
 
             <!-- Realistic Movement Tab -->

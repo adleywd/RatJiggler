@@ -1,6 +1,6 @@
 namespace RatJiggler.Data.Entities;
 
-public class NormalMovementSettings
+public class SimpleMovementSettings
 {
     public int Id { get; set; }
     public int MoveX { get; set; } = 50;

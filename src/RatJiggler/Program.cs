@@ -48,13 +48,13 @@ internal static class Program
         hostBuilder.Services.AddSingleton<IStatusMessageService, StatusMessageService>();
 
         // Add ViewModels
-        hostBuilder.Services.AddTransient<NormalMovementViewModel>();
+        hostBuilder.Services.AddTransient<SimpleMovementViewModel>();
         hostBuilder.Services.AddTransient<RealisticMovementViewModel>();
         hostBuilder.Services.AddTransient<MainWindowViewModel>();
 
         // Add Views
         hostBuilder.Services.AddTransient<MainWindow>();
-        hostBuilder.Services.AddTransient<NormalMovementView>();
+        hostBuilder.Services.AddTransient<SimpleMovementView>();
         hostBuilder.Services.AddTransient<RealisticMovementView>();
         
         hostBuilder.Services.AddAvaloniauiDesktopApplication<App>(ConfigAvaloniaAppBuilder);

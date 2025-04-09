@@ -5,8 +5,8 @@ namespace RatJiggler.Services.Interfaces;
 
 public interface ISettingsService
 {
-    Task<NormalMovementSettings> GetNormalMovementSettingsAsync();
-    Task SaveNormalMovementSettingsAsync(NormalMovementSettings settings);
+    Task<SimpleMovementSettings> GetSimpleMovementSettingsAsync();
+    Task SaveSimpleMovementSettingsAsync(SimpleMovementSettings settings);
     
     Task<RealisticMovementSettings> GetRealisticMovementSettingsAsync();
     Task SaveRealisticMovementSettingsAsync(RealisticMovementSettings settings);

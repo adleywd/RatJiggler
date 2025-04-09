@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace RatJiggler.Views;
 
-public partial class NormalMovementView : UserControl
+public partial class SimpleMovementView : UserControl
 {
-    public NormalMovementView()
+    public SimpleMovementView()
     {
         InitializeComponent();
     }

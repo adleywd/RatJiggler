@@ -6,7 +6,7 @@ namespace RatJiggler.Data;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<UserSettingsEntity> UserSettings { get; set; }
-    public DbSet<NormalMovementSettings> NormalMovementSettings { get; set; } = null!;
+    public DbSet<SimpleMovementSettings> SimpleMovementSettings { get; set; } = null!;
     public DbSet<RealisticMovementSettings> RealisticMovementSettings { get; set; } = null!;
     public DbSet<ApplicationSettings> ApplicationSettings { get; set; } = null!;
 
@@ -101,8 +101,8 @@ public class ApplicationDbContext : DbContext
             .HasDefaultValue(10);
 
         // Seed initial settings
-        modelBuilder.Entity<NormalMovementSettings>().HasData(
-            new NormalMovementSettings { Id = 1 }
+        modelBuilder.Entity<SimpleMovementSettings>().HasData(
+            new SimpleMovementSettings { Id = 1 }
         );
 
         modelBuilder.Entity<RealisticMovementSettings>().HasData(

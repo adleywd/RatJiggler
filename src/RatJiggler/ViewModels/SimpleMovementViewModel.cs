@@ -8,9 +8,9 @@ using RatJiggler.Services.Interfaces;
 
 namespace RatJiggler.ViewModels;
 
-public partial class NormalMovementViewModel : ViewModelBase
+public partial class SimpleMovementViewModel : ViewModelBase
 {
-    private readonly ILogger<NormalMovementViewModel> _logger;
+    private readonly ILogger<SimpleMovementViewModel> _logger;
     private readonly INormalMouseService _normalMouseService;
     private readonly ISettingsService _settingsService;
     private readonly IStatusMessageService _statusMessageService;
@@ -30,8 +30,8 @@ public partial class NormalMovementViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isRunning = false;
 
-    public NormalMovementViewModel(
-        ILogger<NormalMovementViewModel> logger,
+    public SimpleMovementViewModel(
+        ILogger<SimpleMovementViewModel> logger,
         INormalMouseService normalMouseService,
         ISettingsService settingsService,
         IStatusMessageService statusMessageService)
@@ -48,7 +48,7 @@ public partial class NormalMovementViewModel : ViewModelBase
     {
         try
         {
-            var settings = _settingsService.GetNormalMovementSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            var settings = _settingsService.GetSimpleMovementSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             MoveX = settings.MoveX;
             MoveY = settings.MoveY;
             Duration = settings.Duration;
@@ -56,7 +56,7 @@ public partial class NormalMovementViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading normal movement settings");
+            _logger.LogError(ex, "Error loading simple movement settings");
             _statusMessageService.SetStatusMessage("Error loading settings", "Red");
         }
     }
@@ -67,13 +67,13 @@ public partial class NormalMovementViewModel : ViewModelBase
         try
         {
             _normalMouseService.Start(MoveX, MoveY, Duration, BackAndForth);
-            _statusMessageService.SetStatusMessage("Normal mouse movement started", "Green");
+            _statusMessageService.SetStatusMessage("Simple mouse movement started", "Green");
             IsRunning = true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error starting normal movement");
-            _statusMessageService.SetStatusMessage("Error starting normal movement", "Red");
+            _logger.LogError(ex, "Error starting simple movement");
+            _statusMessageService.SetStatusMessage("Error starting simple movement", "Red");
         }
     }
 
@@ -98,7 +98,7 @@ public partial class NormalMovementViewModel : ViewModelBase
     {
         try
         {
-            var settings = new NormalMovementSettings
+            var settings = new SimpleMovementSettings
             {
                 MoveX = MoveX,
                 MoveY = MoveY,
@@ -106,7 +106,7 @@ public partial class NormalMovementViewModel : ViewModelBase
                 BackAndForth = BackAndForth
             };
 
-            await _settingsService.SaveNormalMovementSettingsAsync(settings).ConfigureAwait(false);
+            await _settingsService.SaveSimpleMovementSettingsAsync(settings).ConfigureAwait(false);
             _statusMessageService.SetStatusMessage("Settings saved successfully", "Green");
         }
         catch (Exception ex)

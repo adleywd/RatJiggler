@@ -1,8 +1,8 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:RatJiggler.ViewModels"
-             x:Class="RatJiggler.Views.NormalMovementView"
-             x:DataType="vm:NormalMovementViewModel">
+             x:Class="RatJiggler.Views.SimpleMovementView"
+             x:DataType="vm:SimpleMovementViewModel">
 
     <Grid Margin="10">
         <Grid.RowDefinitions>

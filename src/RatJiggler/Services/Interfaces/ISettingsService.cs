@@ -7,9 +7,11 @@ public interface ISettingsService
 {
     Task<SimpleMovementSettings> GetSimpleMovementSettingsAsync();
     Task SaveSimpleMovementSettingsAsync(SimpleMovementSettings settings);
+    Task RestoreSimpleMovementDefaultsAsync();
     
     Task<RealisticMovementSettings> GetRealisticMovementSettingsAsync();
     Task SaveRealisticMovementSettingsAsync(RealisticMovementSettings settings);
+    Task RestoreRealisticMovementDefaultsAsync();
     
     Task<ApplicationSettings> GetApplicationSettingsAsync();
     Task SaveApplicationSettingsAsync(ApplicationSettings settings);

@@ -121,14 +121,14 @@ public partial class SimpleMovementViewModel : ViewModelBase
     {
         try
         {
-            await _settingsService.RestoreDefaultsAsync().ConfigureAwait(false);
+            await _settingsService.RestoreSimpleMovementDefaultsAsync().ConfigureAwait(false);
             LoadSettings();
-            _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+            _statusMessageService.SetStatusMessage("Simple settings reset to defaults", "Black");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error resetting settings");
-            _statusMessageService.SetStatusMessage("Error resetting settings", "Red");
+            _logger.LogError(ex, "Error resetting simple settings");
+            _statusMessageService.SetStatusMessage("Error resetting simple settings", "Red");
         }
     }
 } 

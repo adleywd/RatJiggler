@@ -202,14 +202,14 @@ public partial class RealisticMovementViewModel : ViewModelBase
     {
         try
         {
-            await _settingsService.RestoreDefaultsAsync().ConfigureAwait(false);
+            await _settingsService.RestoreRealisticMovementDefaultsAsync().ConfigureAwait(false);
             LoadSettings();
-            _statusMessageService.SetStatusMessage("Settings reset to defaults", "Black");
+            _statusMessageService.SetStatusMessage("Realistic settings reset to defaults", "Black");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error resetting settings");
-            _statusMessageService.SetStatusMessage("Error resetting settings", "Red");
+            _logger.LogError(ex, "Error resetting realistic settings");
+            _statusMessageService.SetStatusMessage("Error resetting realistic settings", "Red");
         }
     }
 } 

@@ -116,6 +116,34 @@ public class SettingsService : ISettingsService
         await dbContext.SaveChangesAsync();
     }
 
+    public async Task RestoreSimpleMovementDefaultsAsync()
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        // Remove existing settings
+        dbContext.SimpleMovementSettings.RemoveRange(dbContext.SimpleMovementSettings);
+        
+        // Add default settings
+        await dbContext.SimpleMovementSettings.AddAsync(new SimpleMovementSettings { Id = 1 });
+        
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
+
+    public async Task RestoreRealisticMovementDefaultsAsync()
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        // Remove existing settings
+        dbContext.RealisticMovementSettings.RemoveRange(dbContext.RealisticMovementSettings);
+        
+        // Add default settings
+        await dbContext.RealisticMovementSettings.AddAsync(new RealisticMovementSettings { Id = 1 });
+        
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+    }
+
     public async Task RestoreDefaultsAsync()
     {
         using var scope = _serviceScopeFactory.CreateScope();

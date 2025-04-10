@@ -9,13 +9,13 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
         Title="Rat Jiggler"
-        Height="700"
-        Width="550"
-        CanResize="False"
+        Height="640"
+        Width="560"
+        CanResize="True"
         ShowInTaskbar="True"
         WindowState="Normal"
         WindowStartupLocation="CenterScreen"
-        SizeToContent="WidthAndHeight"
+        SizeToContent="Width"
         SystemDecorations="Full"
         UseLayoutRounding="True"
         RequestedThemeVariant="Dark">
@@ -35,47 +35,88 @@
                     Command="{Binding StopMovementCommand}" />
     </Window.KeyBindings>
 
-    <Grid Margin="15" HorizontalAlignment="Center">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />    <!-- Tab Control -->
-            <RowDefinition Height="Auto" /> <!-- Auto Start Checkbox -->
-            <RowDefinition Height="Auto" /> <!-- Status Message -->
-        </Grid.RowDefinitions>
+    <Border Background="{DynamicResource BackgroundMediumColor}" CornerRadius="8" Margin="5">
+        <Grid Margin="20" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />    <!-- Tab Control -->
+                <RowDefinition Height="Auto" /> <!-- Auto Start Checkbox -->
+                <RowDefinition Height="Auto" /> <!-- Status Message -->
+            </Grid.RowDefinitions>
 
-        <!-- Tab Control for Modes -->
-        <TabControl Grid.Row="0"
-                    Margin="0,0,0,20"
-                    BorderThickness="1"
-                    SelectedIndex="{Binding SelectedTabIndex}">
-            
-            <!-- Simple Movement Tab -->
-            <TabItem Header="Simple Movement"
-                     Cursor="Hand">
-                <local:SimpleMovementView DataContext="{Binding SimpleMovementViewModel}" />
-            </TabItem>
+            <!-- Tab Control for Modes -->
+            <TabControl Grid.Row="0"
+                        Margin="0,0,0,20"
+                        SelectedIndex="{Binding SelectedTabIndex}"
+                        HorizontalAlignment="Stretch"
+                        TabStripPlacement="Top">
+                <TabControl.Styles>
+                    <!-- Style for TabItem -->
+                    <Style Selector="TabItem">
+                        <Setter Property="Width" Value="280"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderThickness="0"
+                                            BorderBrush="{TemplateBinding BorderBrush}">
+                                        <ContentPresenter Content="{TemplateBinding Header}" 
+                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <!-- Style for TextBlock in TabItem Header -->
+                    <Style Selector="TabItem TextBlock">
+                        <Setter Property="TextDecorations">
+                            <Setter.Value>
+                                <TextDecorationCollection/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.Styles>
 
-            <!-- Realistic Movement Tab -->
-            <TabItem Header="Realistic Movement"
-                     Cursor="Hand">
-                <local:RealisticMovementView DataContext="{Binding RealisticMovementViewModel}" />
-            </TabItem>
-        </TabControl>
+                <!-- Tabs -->
+                <TabItem Cursor="Hand">
+                    <TabItem.Header>
+                        <TextBlock Text="Simple" />
+                    </TabItem.Header>
+                    <local:SimpleMovementView DataContext="{Binding SimpleMovementViewModel}" />
+                </TabItem>
+                <TabItem Cursor="Hand">
+                    <TabItem.Header>
+                        <TextBlock Text="Realistic" />
+                    </TabItem.Header>
+                    <local:RealisticMovementView DataContext="{Binding RealisticMovementViewModel}" />
+                </TabItem>
+            </TabControl>
 
-        <!-- Auto Start Checkbox -->
-        <CheckBox Grid.Row="1"
-                  IsChecked="{Binding AutoStartMovement}"
-                  Content="ⓘ Start movement automatically when application starts"
-                  Margin="0,10,0,0"
-                  HorizontalAlignment="Center"
-                  ToolTip.Tip="When enabled, mouse movement will start automatically when the application starts"/>
 
-        <!-- Status Message -->
-        <TextBlock Text="{Binding StatusMessage}"
-                   Grid.Row="2"
-                   HorizontalAlignment="Center"
-                   Margin="0,20,0,0"
-                   FontSize="14"
-                   FontWeight="Bold"
-                   Foreground="{Binding StatusMessageColor}" />
-    </Grid>
+            <!-- Auto Start Checkbox -->
+            <Border Grid.Row="1" 
+                   Classes="card"
+                   Padding="15,10" 
+                   Margin="0,5,0,15">
+                <CheckBox IsChecked="{Binding AutoStartMovement}"
+                          Content="Auto-start when application launches"
+                          HorizontalAlignment="Center"
+                          ToolTip.Tip="When enabled, mouse movement will start automatically when the application starts"/>
+            </Border>
+
+            <!-- Status Message -->
+            <Border Grid.Row="2"
+                   Background="{Binding StatusMessageBackground}" 
+                   CornerRadius="5" 
+                   Padding="15,10" 
+                   Margin="0,5,0,0">
+                <TextBlock Text="{Binding StatusMessage}"
+                           HorizontalAlignment="Center"
+                           FontSize="14"
+                           FontWeight="SemiBold"
+                           Foreground="{Binding StatusMessageColor}" />
+            </Border>
+        </Grid>
+    </Border>
 </Window>

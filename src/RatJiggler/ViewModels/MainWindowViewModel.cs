@@ -21,6 +21,14 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _statusMessageColor = "Purple";
 
+    public string StatusMessageBackground => _statusMessageColor switch
+    {
+        "Red" => "#441111",
+        "Green" => "#114411",
+        "Yellow" => "#444411",
+        _ => "#33225A"  // Default for Purple
+    };
+
     [ObservableProperty]
     private int _selectedTabIndex;
 
@@ -98,6 +106,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             StatusMessage = e.Message;
             StatusMessageColor = e.Color;
+            OnPropertyChanged(nameof(StatusMessageBackground));
         });
     }
 

@@ -1,7 +1,7 @@
 # RatJiggler
 [<img src="./src/RatJiggler/Assets/logo.png" width="150" />](./src/RatJiggler/Assets/logo.png) 
 
-Fake mouse movement for Windows and Linux (experimental).
+Simulate mouse movement for Windows and Linux.
 
 Very useful to avoid being kicked out for being idle in some applications(like games, MMOs, game streaming, etc.)
 or keep your pc awake without having to change the power settings.

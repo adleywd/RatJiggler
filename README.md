@@ -1,4 +1,5 @@
 # RatJiggler
+[<img src="./src/RatJiggler/Assets/logo.png" width="150" />](./src/RatJiggler/Assets/logo.png) 
 
 Fake mouse movement for Windows and Linux (experimental).
 
@@ -21,7 +22,12 @@ or keep your pc awake without having to change the power settings.
 
 ## Tips
 
-- You can use the hotkeys Ctrl + R and Ctrl + C to start and stop the movement, but the application must be in focus for them to work.
+- You can hover the labels for more information about the settings.
 - You can move the mouse very slightly, like 1 pixel in X axis or Y axis, and most applications it will understand as if mouse is moving, but you will not notice it.
+- You can use the hotkeys Ctrl + R and Ctrl + C to start and stop the movement, but the application must be in focus for them to work.
 - The application save the settings in windows at `%LocalAppData%\RatJiggler\`.
 - The application save the settings in linux at `~/.local/share/RatJiggler/`.
+
+## Screenshots
+![screenshot1.png](./assets/screenshot1.png)
+![screenshot2.png](./assets/screenshot2.png)

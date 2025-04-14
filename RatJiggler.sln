@@ -16,6 +16,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatJiggler.Data", "src\RatJ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RatJiggler.MouseUtilities.Linux", "src\RatJiggler.MouseUtilities.Linux\RatJiggler.MouseUtilities.Linux.csproj", "{B18F1401-5D79-45AF-A96E-91050E7E381C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{DB8AECBE-61FF-4101-A88D-F25E9B0BE5C2}"
+	ProjectSection(SolutionItems) = preProject
+		assets\screenshot1.png = assets\screenshot1.png
+		assets\screenshot2.png = assets\screenshot2.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

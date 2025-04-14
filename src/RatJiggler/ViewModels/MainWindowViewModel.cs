@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Reflection;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -21,7 +22,12 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _statusMessageColor = "Purple";
 
-    public string StatusMessageBackground => _statusMessageColor switch
+    [ObservableProperty]
+    private string _version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.0.0";
+
+    public string Title => $"RatJiggler v{Version}";
+
+    public string StatusMessageBackground => StatusMessageColor switch
     {
         "Red" => "#441111",
         "Green" => "#114411",

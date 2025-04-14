@@ -3,7 +3,7 @@
 
 Simulate mouse movement for Windows and Linux.
 
-Very useful to avoid being kicked out for being idle in some applications (like games, MMOs, game streaming, etc.)
+Very useful to avoid being kicked out for being idle in some applications (games, MMOs, game streaming, etc.)
 or to keep your pc awake without having to change the power settings.
 
 ## Features

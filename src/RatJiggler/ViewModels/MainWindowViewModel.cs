@@ -35,6 +35,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _autoStartMovement;
 
+    [ObservableProperty]
+    private bool _isMovementRunning;
+
     partial void OnAutoStartMovementChanged(bool value)
     {
         Task.Run(async () =>
@@ -119,6 +122,7 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 RealisticMovementViewModel.StopMovementCommand.Execute(null);
             }
+            IsMovementRunning = SimpleMovementViewModel.IsRunning;
         }
         else // Switched to Realistic movement tab
         {
@@ -126,6 +130,7 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 SimpleMovementViewModel.StopMovementCommand.Execute(null);
             }
+            IsMovementRunning = RealisticMovementViewModel.IsRunning;
         }
         
         SaveSelectedTabAsync();
@@ -158,10 +163,12 @@ public partial class MainWindowViewModel : ViewModelBase
             if (SelectedTabIndex == 0)
             {
                 SimpleMovementViewModel.StartMovementCommand.Execute(null);
+                IsMovementRunning = SimpleMovementViewModel.IsRunning;
             }
             else
             {
                 RealisticMovementViewModel.StartMovementCommand.Execute(null);
+                IsMovementRunning = RealisticMovementViewModel.IsRunning;
             }
         }
         catch (Exception ex)
@@ -179,10 +186,12 @@ public partial class MainWindowViewModel : ViewModelBase
             if (SelectedTabIndex == 0)
             {
                 SimpleMovementViewModel.StopMovementCommand.Execute(null);
+                IsMovementRunning = SimpleMovementViewModel.IsRunning;
             }
             else
             {
                 RealisticMovementViewModel.StopMovementCommand.Execute(null);
+                IsMovementRunning = RealisticMovementViewModel.IsRunning;
             }
         }
         catch (Exception ex)

@@ -8,7 +8,7 @@
         x:Class="RatJiggler.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
-        Title="Rat Jiggler"
+        Title="RatJiggler"
         Height="670"
         Width="640"
         MinHeight="670"
@@ -124,7 +124,9 @@
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center"
                                 Spacing="15">
-                        <Button Width="200" Command="{Binding StartMouseMovementByHotkeyCommand}">
+                        <Button Width="200" 
+                               Command="{Binding StartMouseMovementByHotkeyCommand}"
+                               IsEnabled="{Binding !IsMovementRunning}">
                             <Panel>
                                 <TextBlock TextAlignment="Center">
                                     <Run Text="Start Moving Mouse" FontWeight="Medium" FontSize="14" />
@@ -133,7 +135,11 @@
                                 </TextBlock>
                             </Panel>
                         </Button>
-                        <Button Width="200" Command="{Binding StopMovementCommand}" Classes="secondary">
+                        
+                        <Button Width="200" 
+                               Command="{Binding StopMovementCommand}" 
+                               Classes="secondary"
+                               IsEnabled="{Binding IsMovementRunning}">
                             <Panel>
                                 <TextBlock TextAlignment="Center">
                                     <Run Text="Stop Mouse Movement" FontWeight="Medium" FontSize="14" />

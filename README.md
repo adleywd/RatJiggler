@@ -25,8 +25,8 @@ or to keep your pc awake without having to change the power settings.
 - You can hover over the labels for more information about the settings.
 - You can move the mouse very slightly, 1 pixel in X axis or Y axis, and most applications will understand as if the mouse is moving, but you will not notice it.
 - You can use the hotkeys Ctrl + R and Ctrl + C to start and stop the movement, but the application must be in focus for them to work.
-- The application will save the settings in windows at `%LocalAppData%\RatJiggler\`.
-- The application will save the settings in linux at `~/.local/share/RatJiggler/`.
+- The application will save the settings on windows at `%LocalAppData%\RatJiggler\`.
+- The application will save the settings on linux at `~/.local/share/RatJiggler/`.
 
 ## Screenshots
 ![screenshot1.png](./assets/screenshot1.png)

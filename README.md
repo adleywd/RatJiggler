@@ -1,5 +1,5 @@
 # RatJiggler
-[<img src="./src/RatJiggler/Assets/logo.png" width="150" />](./src/RatJiggler/Assets/logo.png) 
+[<img src="./src/RatJiggler/Assets/logo.png" width="150" />](./src/RatJiggler/Assets/logo.ico) 
 
 Simulate mouse movement for Windows and Linux.
 

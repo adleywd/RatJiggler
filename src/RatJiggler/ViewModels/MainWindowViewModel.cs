@@ -28,10 +28,10 @@ public partial class MainWindowViewModel : ViewModelBase
     private string _version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.0.0";
 
     [ObservableProperty]
-    private WindowState windowState;
+    private WindowState _windowState;
     
     [ObservableProperty]
-    private bool showInTaskbar = true;
+    private bool _showInTaskbar = true;
     
     [ObservableProperty]
     private int _selectedTabIndex;

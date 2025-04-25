@@ -27,12 +27,6 @@ public partial class ApplicationViewModel : ViewModelBase
     [RelayCommand]
     private void ShowWindow()
     {
-        
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow ??= _mainWindow;
-        }
-
         _mainWindow.WindowState = WindowState.Normal;
         _mainWindow.Show();
         _mainWindow.BringIntoView();

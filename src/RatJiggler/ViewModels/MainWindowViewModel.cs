@@ -42,6 +42,12 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isMovementRunning;
     
+    [ObservableProperty]
+    private bool _minimizeToTray;
+    
+    [ObservableProperty]
+    private bool _startMinimizedToTray;
+    
     public string Title => $"RatJiggler v{Version}";
 
     public string StatusMessageBackground => StatusMessageColor switch
@@ -51,35 +57,6 @@ public partial class MainWindowViewModel : ViewModelBase
         "Yellow" => "#444411",
         _ => "#33225A"  // Default for Purple
     };
-
-    partial void OnWindowStateChanged(WindowState value)
-    {
-        ShowInTaskbar = value != WindowState.Minimized;
-    }
-    
-    partial void OnAutoStartMovementChanged(bool value)
-    {
-        Task.Run(async () =>
-        {
-            try
-            {
-                var appSettings = new ApplicationSettings
-                {
-                    SelectedTabIndex = SelectedTabIndex,
-                    AutoStartMovement = value
-                };
-
-                await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);
-                _logger.LogInformation("Auto start movement setting saved: {Value}", value);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error saving auto start movement setting");
-                _statusMessageService.SetStatusMessage("Error saving settings", "Red");
-            }
-        });
-    }
-
     public SimpleMovementViewModel SimpleMovementViewModel { get; }
     public RealisticMovementViewModel RealisticMovementViewModel { get; }
 
@@ -106,22 +83,38 @@ public partial class MainWindowViewModel : ViewModelBase
             StartMouseMovementByHotkeyCommand.Execute(null);
         }
     }
-
-    private void LoadSettings()
+    
+        
+    partial void OnWindowStateChanged(WindowState value)
     {
-        try
+        if (!MinimizeToTray)
         {
-            var appSettings = _settingsService.GetApplicationSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-            SelectedTabIndex = appSettings.SelectedTabIndex;
-            AutoStartMovement = appSettings.AutoStartMovement;
+            ShowInTaskbar = true;
+            return;
         }
-        catch (Exception ex)
+        ShowInTaskbar = value != WindowState.Minimized;
+    }
+    
+    partial void OnMinimizeToTrayChanged(bool value)
+    {
+        if (value == false)
         {
-            _logger.LogError(ex, "Error loading application settings");
-            _statusMessageService.SetStatusMessage("Error loading settings", "Red");
+            StartMinimizedToTray = false;
         }
+        
+        SaveSettings();
     }
 
+    partial void OnStartMinimizedToTrayChanged(bool value)
+    {
+        SaveSettings();
+    }
+    
+    partial void OnAutoStartMovementChanged(bool value)
+    {
+        SaveSettings();
+    }
+    
     private void OnStatusMessageChanged(object? sender, StatusMessageEventArgs e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -152,26 +145,7 @@ public partial class MainWindowViewModel : ViewModelBase
             IsMovementRunning = RealisticMovementViewModel.IsRunning;
         }
         
-        SaveSelectedTabAsync();
-    }
-
-    private async void SaveSelectedTabAsync()
-    {
-        try
-        {
-            var appSettings = new ApplicationSettings
-            {
-                SelectedTabIndex = SelectedTabIndex,
-                AutoStartMovement = AutoStartMovement
-            };
-
-            await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error saving selected tab");
-            _statusMessageService.SetStatusMessage("Error saving selected tab", "Red");
-        }
+        SaveSettings();
     }
 
     [RelayCommand]
@@ -217,6 +191,48 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             _logger.LogError(ex, "Error executing stop movement hotkey");
             _statusMessageService.SetStatusMessage("Error stopping movement", "Red");
+        }
+    }
+    
+    private void SaveSettings()
+    {
+        Task.Run(async () =>
+        {
+            try
+            {
+                var appSettings = new ApplicationSettings
+                {
+                    SelectedTabIndex = SelectedTabIndex,
+                    AutoStartMovement = AutoStartMovement,
+                    MinimizeToTray = MinimizeToTray,
+                    StartMinimizedToTray = StartMinimizedToTray
+                };
+                await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);
+                
+                _logger.LogInformation("Saving settings: {@Settings}", appSettings);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving auto start movement setting");
+                _statusMessageService.SetStatusMessage("Error saving settings", "Red");
+            }
+        });
+    }
+    
+    private void LoadSettings()
+    {
+        try
+        {
+            var appSettings = _settingsService.GetApplicationSettingsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            SelectedTabIndex = appSettings.SelectedTabIndex;
+            AutoStartMovement = appSettings.AutoStartMovement;
+            MinimizeToTray = appSettings.MinimizeToTray;
+            StartMinimizedToTray = appSettings.StartMinimizedToTray;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading application settings");
+            _statusMessageService.SetStatusMessage("Error loading settings", "Red");
         }
     }
 }

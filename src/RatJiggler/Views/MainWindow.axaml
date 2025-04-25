@@ -9,10 +9,10 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
         Title="{Binding Title}"
-        Height="670"
-        Width="640"
-        MinHeight="670"
+        MinHeight="640"
         MinWidth="640"
+        Height="740"
+        Width="640"
         CanResize="True"
         ShowInTaskbar="{Binding ShowInTaskbar}"
         WindowState="{Binding WindowState, Mode=TwoWay}"
@@ -119,7 +119,21 @@
                               HorizontalAlignment="Center"
                               Margin="0,0,0,15"
                               ToolTip.Tip="When enabled, mouse movement will start automatically when the application starts"/>
-                
+                    
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15"> 
+                    <!-- Minimize to Tray Checkbox -->
+                        <CheckBox IsChecked="{Binding MinimizeToTray}"
+                                  Content="Minimize to tray"
+                                  ToolTip.Tip="When enabled, the application will minimize to the system tray when minimized"/>
+                        
+                        <!-- Disabled until implemented - Start Minimized to Tray Checkbox -->
+                        <CheckBox IsChecked="{Binding StartMinimizedToTray}"
+                                  IsEnabled="{Binding MinimizeToTray}"
+                                  IsVisible="False"
+                                  Margin="10,0,0,0"
+                                  Content="Start minimized to tray"
+                                  ToolTip.Tip="When enabled, the application will start minimized to the system tray when launched"/>
+                    </StackPanel>
                     <!-- Movement Control Buttons -->
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center"

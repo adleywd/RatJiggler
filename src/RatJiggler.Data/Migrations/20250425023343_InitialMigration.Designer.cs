@@ -10,8 +10,8 @@ using RatJiggler.Data;
 namespace RatJiggler.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409164233_ChangedNameNormalToSimpleMovement")]
-    partial class ChangedNameNormalToSimpleMovement
+    [Migration("20250425023343_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,11 +26,15 @@ namespace RatJiggler.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("AutoStartMovement")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("MinimizeToTray")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SelectedTabIndex")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("StartMinimizedToTray")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -42,7 +46,9 @@ namespace RatJiggler.Data.Migrations
                         {
                             Id = 1,
                             AutoStartMovement = false,
-                            SelectedTabIndex = 0
+                            MinimizeToTray = false,
+                            SelectedTabIndex = 0,
+                            StartMinimizedToTray = false
                         });
                 });
 
@@ -153,115 +159,6 @@ namespace RatJiggler.Data.Migrations
                             MoveX = 50,
                             MoveY = 0
                         });
-                });
-
-            modelBuilder.Entity("RatJiggler.Data.Entities.UserSettingsEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("BackForth")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<int>("Duration")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(60);
-
-                    b.Property<bool>("EnableRandomPauses")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("EnableStepPauses")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("EnableUserInterventionDetection")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<float>("HorizontalBias")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("REAL")
-                        .HasDefaultValue(0f);
-
-                    b.Property<int>("MaxSpeed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(7);
-
-                    b.Property<int>("MinSpeed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(3);
-
-                    b.Property<int>("MoveX")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(50);
-
-                    b.Property<int>("MoveY")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("MovementThresholdInPixels")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(10);
-
-                    b.Property<float>("PaddingPercentage")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("REAL")
-                        .HasDefaultValue(0.1f);
-
-                    b.Property<int>("RandomPauseMax")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(500);
-
-                    b.Property<int>("RandomPauseMin")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(100);
-
-                    b.Property<int>("RandomPauseProbability")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(10);
-
-                    b.Property<int?>("RandomSeed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("SelectedMouseMovementModeIndex")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("StepPauseMax")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(50);
-
-                    b.Property<int>("StepPauseMin")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(20);
-
-                    b.Property<float>("VerticalBias")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("REAL")
-                        .HasDefaultValue(0f);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserSettings");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,7 +5,7 @@
 namespace RatJiggler.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,27 +16,14 @@ namespace RatJiggler.Data.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SelectedTabIndex = table.Column<int>(type: "INTEGER", nullable: false)
+                    SelectedTabIndex = table.Column<int>(type: "INTEGER", nullable: false),
+                    AutoStartMovement = table.Column<bool>(type: "INTEGER", nullable: false),
+                    MinimizeToTray = table.Column<bool>(type: "INTEGER", nullable: false),
+                    StartMinimizedToTray = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ApplicationSettings", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NormalMovementSettings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    MoveX = table.Column<int>(type: "INTEGER", nullable: false),
-                    MoveY = table.Column<int>(type: "INTEGER", nullable: false),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    BackAndForth = table.Column<bool>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NormalMovementSettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,51 +54,35 @@ namespace RatJiggler.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserSettings",
+                name: "SimpleMovementSettings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    MoveX = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 50),
-                    MoveY = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
-                    Duration = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 60),
-                    BackForth = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
-                    MinSpeed = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 3),
-                    MaxSpeed = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 7),
-                    EnableStepPauses = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
-                    StepPauseMin = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 20),
-                    StepPauseMax = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 50),
-                    EnableRandomPauses = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
-                    RandomPauseProbability = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 10),
-                    RandomPauseMin = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 100),
-                    RandomPauseMax = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 500),
-                    HorizontalBias = table.Column<float>(type: "REAL", nullable: false, defaultValue: 0f),
-                    VerticalBias = table.Column<float>(type: "REAL", nullable: false, defaultValue: 0f),
-                    PaddingPercentage = table.Column<float>(type: "REAL", nullable: false, defaultValue: 0.1f),
-                    SelectedMouseMovementModeIndex = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
-                    RandomSeed = table.Column<int>(type: "INTEGER", nullable: true),
-                    EnableUserInterventionDetection = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
-                    MovementThresholdInPixels = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 10)
+                    MoveX = table.Column<int>(type: "INTEGER", nullable: false),
+                    MoveY = table.Column<int>(type: "INTEGER", nullable: false),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    BackAndForth = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserSettings", x => x.Id);
+                    table.PrimaryKey("PK_SimpleMovementSettings", x => x.Id);
                 });
 
             migrationBuilder.InsertData(
                 table: "ApplicationSettings",
-                columns: new[] { "Id", "SelectedTabIndex" },
-                values: new object[] { 1, 0 });
-
-            migrationBuilder.InsertData(
-                table: "NormalMovementSettings",
-                columns: new[] { "Id", "BackAndForth", "Duration", "MoveX", "MoveY" },
-                values: new object[] { 1, true, 60, 50, 0 });
+                columns: new[] { "Id", "AutoStartMovement", "MinimizeToTray", "SelectedTabIndex", "StartMinimizedToTray" },
+                values: new object[] { 1, false, false, 0, false });
 
             migrationBuilder.InsertData(
                 table: "RealisticMovementSettings",
                 columns: new[] { "Id", "EnableRandomPauses", "EnableStepPauses", "EnableUserInterventionDetection", "HorizontalBias", "MaxSpeed", "MinSpeed", "MovementThresholdInPixels", "PaddingPercentage", "RandomPauseMax", "RandomPauseMin", "RandomPauseProbability", "RandomSeed", "StepPauseMax", "StepPauseMin", "VerticalBias" },
                 values: new object[] { 1, true, true, true, 0f, 7, 3, 10, 0.1f, 500, 100, 10, null, 50, 20, 0f });
+
+            migrationBuilder.InsertData(
+                table: "SimpleMovementSettings",
+                columns: new[] { "Id", "BackAndForth", "Duration", "MoveX", "MoveY" },
+                values: new object[] { 1, true, 60, 50, 0 });
         }
 
         /// <inheritdoc />
@@ -121,13 +92,10 @@ namespace RatJiggler.Data.Migrations
                 name: "ApplicationSettings");
 
             migrationBuilder.DropTable(
-                name: "NormalMovementSettings");
-
-            migrationBuilder.DropTable(
                 name: "RealisticMovementSettings");
 
             migrationBuilder.DropTable(
-                name: "UserSettings");
+                name: "SimpleMovementSettings");
         }
     }
 }

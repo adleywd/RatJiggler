@@ -22,7 +22,7 @@ public class SettingsService : ISettingsService
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         
-        var settings = await dbContext.SimpleMovementSettings.FirstOrDefaultAsync();
+        var settings = await dbContext.SimpleMovementSettings.FirstOrDefaultAsync().ConfigureAwait(false);
         return settings ?? new SimpleMovementSettings { Id = 1 };
     }
 
@@ -31,7 +31,7 @@ public class SettingsService : ISettingsService
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var existingSettings = await dbContext.SimpleMovementSettings.FirstOrDefaultAsync();
+        var existingSettings = await dbContext.SimpleMovementSettings.FirstOrDefaultAsync().ConfigureAwait(false);
         if (existingSettings == null)
         {
             settings.Id = 1;
@@ -44,7 +44,7 @@ public class SettingsService : ISettingsService
             existingSettings.Duration = settings.Duration;
             existingSettings.BackAndForth = settings.BackAndForth;
         }
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     public async Task<RealisticMovementSettings> GetRealisticMovementSettingsAsync()
@@ -52,7 +52,7 @@ public class SettingsService : ISettingsService
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         
-        var settings = await dbContext.RealisticMovementSettings.FirstOrDefaultAsync();
+        var settings = await dbContext.RealisticMovementSettings.FirstOrDefaultAsync().ConfigureAwait(false);
         return settings ?? new RealisticMovementSettings { Id = 1 };
     }
 
@@ -61,7 +61,7 @@ public class SettingsService : ISettingsService
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var existingSettings = await dbContext.RealisticMovementSettings.FirstOrDefaultAsync();
+        var existingSettings = await dbContext.RealisticMovementSettings.FirstOrDefaultAsync().ConfigureAwait(false);
         if (existingSettings == null)
         {
             settings.Id = 1;
@@ -85,7 +85,7 @@ public class SettingsService : ISettingsService
             existingSettings.EnableUserInterventionDetection = settings.EnableUserInterventionDetection;
             existingSettings.MovementThresholdInPixels = settings.MovementThresholdInPixels;
         }
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     public async Task<ApplicationSettings> GetApplicationSettingsAsync()
@@ -93,7 +93,7 @@ public class SettingsService : ISettingsService
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         
-        var settings = await dbContext.ApplicationSettings.FirstOrDefaultAsync();
+        var settings = await dbContext.ApplicationSettings.FirstOrDefaultAsync().ConfigureAwait(false);
         return settings ?? new ApplicationSettings { Id = 1 };
     }
 
@@ -102,7 +102,7 @@ public class SettingsService : ISettingsService
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        var existingSettings = await dbContext.ApplicationSettings.FirstOrDefaultAsync();
+        var existingSettings = await dbContext.ApplicationSettings.FirstOrDefaultAsync().ConfigureAwait(false);
         if (existingSettings == null)
         {
             settings.Id = 1;
@@ -112,8 +112,10 @@ public class SettingsService : ISettingsService
         {
             existingSettings.SelectedTabIndex = settings.SelectedTabIndex;
             existingSettings.AutoStartMovement = settings.AutoStartMovement;
+            existingSettings.MinimizeToTray = settings.MinimizeToTray;
+            existingSettings.StartMinimizedToTray = settings.StartMinimizedToTray;
         }
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     public async Task RestoreSimpleMovementDefaultsAsync()
@@ -125,7 +127,7 @@ public class SettingsService : ISettingsService
         dbContext.SimpleMovementSettings.RemoveRange(dbContext.SimpleMovementSettings);
         
         // Add default settings
-        await dbContext.SimpleMovementSettings.AddAsync(new SimpleMovementSettings { Id = 1 });
+        await dbContext.SimpleMovementSettings.AddAsync(new SimpleMovementSettings { Id = 1 }).ConfigureAwait(false);
         
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
@@ -139,7 +141,7 @@ public class SettingsService : ISettingsService
         dbContext.RealisticMovementSettings.RemoveRange(dbContext.RealisticMovementSettings);
         
         // Add default settings
-        await dbContext.RealisticMovementSettings.AddAsync(new RealisticMovementSettings { Id = 1 });
+        await dbContext.RealisticMovementSettings.AddAsync(new RealisticMovementSettings { Id = 1 }).ConfigureAwait(false);
         
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
@@ -154,9 +156,9 @@ public class SettingsService : ISettingsService
         dbContext.RealisticMovementSettings.RemoveRange(dbContext.RealisticMovementSettings);
         dbContext.ApplicationSettings.RemoveRange(dbContext.ApplicationSettings);
         
-        await dbContext.SimpleMovementSettings.AddAsync(new SimpleMovementSettings { Id = 1 });
-        await dbContext.RealisticMovementSettings.AddAsync(new RealisticMovementSettings { Id = 1 });
-        await dbContext.ApplicationSettings.AddAsync(new ApplicationSettings { Id = 1 });
+        await dbContext.SimpleMovementSettings.AddAsync(new SimpleMovementSettings { Id = 1 }).ConfigureAwait(false);
+        await dbContext.RealisticMovementSettings.AddAsync(new RealisticMovementSettings { Id = 1 }).ConfigureAwait(false);
+        await dbContext.ApplicationSettings.AddAsync(new ApplicationSettings { Id = 1 }).ConfigureAwait(false);
         
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }

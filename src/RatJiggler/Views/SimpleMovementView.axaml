@@ -4,73 +4,76 @@
              x:Class="RatJiggler.Views.SimpleMovementView"
              x:DataType="vm:SimpleMovementViewModel">
 
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <!-- Movement Settings -->
-        <Border Grid.Row="0" Classes="card">
-            <StackPanel Spacing="10">
-                <TextBlock Text="Movement Settings"
-                           Classes="heading"/>
-                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5,0,0">
-                    <!-- X and Y Movement -->
-                    <Label Content="Horizontal:"
-                           Grid.Row="0" Grid.Column="0"
-                           Margin="5" HorizontalAlignment="Right" 
-                           ToolTip.Tip="How far left/right the mouse will move (in pixels)"/>
-                    <TextBox Text="{Binding MoveX}" Width="100"
-                             Grid.Row="0" Grid.Column="1"
-                             Margin="5" HorizontalAlignment="Left" />
+            <!-- Movement Settings -->
+            <Border Grid.Row="0" Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Movement Settings"
+                               Classes="heading" />
+                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5,0,0">
+                        <!-- X and Y Movement -->
+                        <Label Content="Horizontal:"
+                               Grid.Row="0" Grid.Column="0"
+                               Margin="5" HorizontalAlignment="Right"
+                               ToolTip.Tip="How far left/right the mouse will move (in pixels)" />
+                        <TextBox Text="{Binding MoveX}" Width="100"
+                                 Grid.Row="0" Grid.Column="1"
+                                 Margin="5" HorizontalAlignment="Left" />
 
-                    <Label Content="Vertical:"
-                           Grid.Row="1" Grid.Column="0"
-                           Margin="5" HorizontalAlignment="Right" 
-                           ToolTip.Tip="How far up/down the mouse will move (in pixels)"/>
-                    <TextBox Text="{Binding MoveY}" Width="100"
-                             Grid.Row="1" Grid.Column="1"
-                             Margin="5" HorizontalAlignment="Left" />
+                        <Label Content="Vertical:"
+                               Grid.Row="1" Grid.Column="0"
+                               Margin="5" HorizontalAlignment="Right"
+                               ToolTip.Tip="How far up/down the mouse will move (in pixels)" />
+                        <TextBox Text="{Binding MoveY}" Width="100"
+                                 Grid.Row="1" Grid.Column="1"
+                                 Margin="5" HorizontalAlignment="Left" />
 
-                    <!-- Duration -->
-                    <Label Content="Duration:"
-                           Grid.Row="2" Grid.Column="0"
-                           Margin="5" HorizontalAlignment="Right" 
-                           ToolTip.Tip="How long it takes to complete one movement (in seconds)"/>
-                    <TextBox Text="{Binding Duration}" Width="100"
-                             Grid.Row="2" Grid.Column="1"
-                             Margin="5" HorizontalAlignment="Left" />
-                </Grid>
+                        <!-- Duration -->
+                        <Label Content="Duration:"
+                               Grid.Row="2" Grid.Column="0"
+                               Margin="5" HorizontalAlignment="Right"
+                               ToolTip.Tip="How long it takes to complete one movement (in seconds)" />
+                        <TextBox Text="{Binding Duration}" Width="100"
+                                 Grid.Row="2" Grid.Column="1"
+                                 Margin="5" HorizontalAlignment="Left" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Back/Forth Toggle -->
+            <Border Grid.Row="1" Classes="card">
+                <CheckBox IsChecked="{Binding BackAndForth}"
+                          Content="Alternate movement directions"
+                          HorizontalAlignment="Left"
+                          ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction." />
+            </Border>
+
+            <!-- Settings Buttons -->
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Spacing="15"
+                        Margin="0,0,0,0">
+                <Button Command="{Binding SaveSettingsCommand}"
+                        Content="Save Settings"
+                        Width="150"
+                        HorizontalContentAlignment="Center"
+                        ToolTip.Tip="Save your current settings for next time" />
+                <Button Command="{Binding RestoreDefaultsCommand}"
+                        Content="Reset to Defaults"
+                        Classes="secondary"
+                        HorizontalContentAlignment="Center"
+                        Width="150"
+                        ToolTip.Tip="Restore all settings to their original values" />
             </StackPanel>
-        </Border>
-
-        <!-- Back/Forth Toggle -->
-        <Border Grid.Row="1" Classes="card">
-            <CheckBox IsChecked="{Binding BackAndForth}"
-                      Content="Alternate movement directions"
-                      HorizontalAlignment="Left"
-                      ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction."/>
-        </Border>
-
-        <!-- Settings Buttons -->
-        <StackPanel Grid.Row="2"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Center"
-                    Spacing="15"
-                    Margin="0,0,0,0">
-            <Button Command="{Binding SaveSettingsCommand}"
-                    Content="Save Settings"
-                    Width="150"
-                    HorizontalContentAlignment="Center"
-                    ToolTip.Tip="Save your current settings for next time"/>
-            <Button Command="{Binding RestoreDefaultsCommand}"
-                    Content="Reset to Defaults"
-                    Classes="secondary"
-                    HorizontalContentAlignment="Center"
-                    Width="150"
-                    ToolTip.Tip="Restore all settings to their original values"/>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

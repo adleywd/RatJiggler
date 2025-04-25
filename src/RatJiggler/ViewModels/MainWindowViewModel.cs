@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Reflection;
+using Avalonia.Controls;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using RatJiggler.Data.Entities;
 using RatJiggler.Services.Interfaces;
+using RatJiggler.Views;
 
 namespace RatJiggler.ViewModels;
 
@@ -25,6 +27,21 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private string _version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.0.0";
 
+    [ObservableProperty]
+    private WindowState windowState;
+    
+    [ObservableProperty]
+    private bool showInTaskbar = true;
+    
+    [ObservableProperty]
+    private int _selectedTabIndex;
+
+    [ObservableProperty]
+    private bool _autoStartMovement;
+
+    [ObservableProperty]
+    private bool _isMovementRunning;
+    
     public string Title => $"RatJiggler v{Version}";
 
     public string StatusMessageBackground => StatusMessageColor switch
@@ -35,15 +52,11 @@ public partial class MainWindowViewModel : ViewModelBase
         _ => "#33225A"  // Default for Purple
     };
 
-    [ObservableProperty]
-    private int _selectedTabIndex;
-
-    [ObservableProperty]
-    private bool _autoStartMovement;
-
-    [ObservableProperty]
-    private bool _isMovementRunning;
-
+    partial void OnWindowStateChanged(WindowState value)
+    {
+        ShowInTaskbar = value != WindowState.Minimized;
+    }
+    
     partial void OnAutoStartMovementChanged(bool value)
     {
         Task.Run(async () =>

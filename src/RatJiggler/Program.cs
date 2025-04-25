@@ -46,14 +46,13 @@ internal static class Program
 
         // Add status message service
         hostBuilder.Services.AddSingleton<IStatusMessageService, StatusMessageService>();
-
+        
         // Add ViewModels
         hostBuilder.Services.AddTransient<SimpleMovementViewModel>();
         hostBuilder.Services.AddTransient<RealisticMovementViewModel>();
         hostBuilder.Services.AddTransient<MainWindowViewModel>();
 
         // Add Views
-        hostBuilder.Services.AddTransient<MainWindow>();
         hostBuilder.Services.AddTransient<SimpleMovementView>();
         hostBuilder.Services.AddTransient<RealisticMovementView>();
         

@@ -12,7 +12,7 @@ namespace RatJiggler;
 public partial class App : Application
 {
     private readonly IServiceProvider _serviceProvider;
-
+    
     public App(IServiceProvider serviceProvider) : base()
     {
         _serviceProvider = serviceProvider;
@@ -31,8 +31,8 @@ public partial class App : Application
             {
                 DataContext = _serviceProvider.GetRequiredService<MainWindowViewModel>()
             };
-
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+            DataContext = new ApplicationViewModel(desktop.MainWindow);
         }
 
         base.OnFrameworkInitializationCompleted();

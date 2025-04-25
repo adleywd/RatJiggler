@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using RatJiggler.ViewModels;
 
 namespace RatJiggler.Views;
 

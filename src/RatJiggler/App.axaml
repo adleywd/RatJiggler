@@ -1,9 +1,10 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="RatJiggler.App"
+             x:DataType="vm:ApplicationViewModel"
              xmlns:local="using:RatJiggler"
+             xmlns:vm="clr-namespace:RatJiggler.ViewModels"
              RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -14,6 +15,20 @@
         <StyleInclude Source="avares://RatJiggler/AppStyles.axaml"/>
     </Application.Styles>
     
+     <TrayIcon.Icons>
+         <TrayIcons>
+             <TrayIcon Command="{Binding ShowWindowCommand}" Icon="/Assets/logo.ico" ToolTipText="RatJiggler">
+                 <TrayIcon.Menu>
+                     <NativeMenu>
+                         <NativeMenuItem Header="Show" Command="{Binding ShowWindowCommand}" />
+                         <NativeMenuItemSeparator />
+                         <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                     </NativeMenu>
+                 </TrayIcon.Menu>
+             </TrayIcon>
+         </TrayIcons>
+     </TrayIcon.Icons>
+             
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

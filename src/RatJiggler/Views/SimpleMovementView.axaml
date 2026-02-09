@@ -2,122 +2,124 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:RatJiggler.ViewModels"
              xmlns:converters="clr-namespace:RatJiggler.Converters"
+             xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:Class="RatJiggler.Views.SimpleMovementView"
              x:DataType="vm:SimpleMovementViewModel">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
-        <Grid Margin="10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <StackPanel MaxWidth="600" Margin="24,20" Spacing="0">
 
-            <!-- Movement Settings -->
-            <Border Grid.Row="0" Classes="card">
-                <StackPanel Spacing="10">
-                    <TextBlock Text="Movement Settings"
-                               Classes="heading" />
-                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" Margin="0,5,0,0">
-                        <!-- X and Y on same row -->
-                        <Label Content="Horizontal (px):"
-                               Grid.Row="0" Grid.Column="0"
-                               Margin="5" HorizontalAlignment="Right"
-                               ToolTip.Tip="How far left/right the mouse will move (in pixels)" />
-                        <TextBox Text="{Binding MoveX}" Width="100"
-                                 Grid.Row="0" Grid.Column="1"
-                                 Margin="5" HorizontalAlignment="Left" />
+            <!-- Page Header -->
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock Text="Simple Movement" Classes="pageTitle" />
+                <TextBlock Text="Fixed direction mouse movement with configurable distance and timing" Classes="pageSubtitle" />
+            </StackPanel>
 
-                        <Label Content="Vertical (px):"
-                               Grid.Row="0" Grid.Column="2"
-                               Margin="5" HorizontalAlignment="Right"
-                               ToolTip.Tip="How far up/down the mouse will move (in pixels)" />
-                        <TextBox Text="{Binding MoveY}" Width="100"
-                                 Grid.Row="0" Grid.Column="3"
-                                 Margin="5" HorizontalAlignment="Left" />
+            <!-- Movement Section -->
+            <Border Classes="surface">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <mi:MaterialIcon Kind="ArrowAll" Width="20" Height="20"
+                                         Foreground="{DynamicResource PrimaryLightColor}" />
+                        <TextBlock Text="Movement" Classes="sectionTitle" VerticalAlignment="Center" />
+                    </StackPanel>
 
-                        <!-- Duration below -->
-                        <Label Content="Duration (sec):"
-                               Grid.Row="1" Grid.Column="0"
-                               Margin="5" HorizontalAlignment="Right"
-                               ToolTip.Tip="How long it takes to complete one movement (in seconds)" />
-                        <TextBox Text="{Binding Duration}" Width="100"
-                                 Grid.Row="1" Grid.Column="1"
-                                 Margin="5" HorizontalAlignment="Left" />
+                    <Grid ColumnDefinitions="*,24,*" RowDefinitions="Auto,Auto,Auto,Auto">
+                        <!-- Row 0: Labels -->
+                        <TextBlock Text="Horizontal (px)" Classes="fieldLabel"
+                                   Grid.Row="0" Grid.Column="0" />
+                        <TextBlock Text="Vertical (px)" Classes="fieldLabel"
+                                   Grid.Row="0" Grid.Column="2" />
+
+                        <!-- Row 1: Inputs -->
+                        <NumericUpDown Value="{Binding MoveX}" Grid.Row="1" Grid.Column="0"
+                                 ToolTip.Tip="How far left/right the mouse will move (in pixels)" />
+                        <NumericUpDown Value="{Binding MoveY}" Grid.Row="1" Grid.Column="2"
+                                 ToolTip.Tip="How far up/down the mouse will move (in pixels)" />
+
+                        <!-- Row 2: Duration Label -->
+                        <TextBlock Text="Duration (sec)" Classes="fieldLabel"
+                                   Grid.Row="2" Grid.Column="0" Margin="0,12,0,4" />
+
+                        <!-- Row 3: Duration Input -->
+                        <NumericUpDown Value="{Binding Duration}" Grid.Row="3" Grid.Column="0"
+                                 ToolTip.Tip="How long it takes to complete one movement (in seconds)" />
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- Behavior (merged BackAndForth + UserInterventionDetection) -->
-            <Border Grid.Row="1" Classes="card">
-                <StackPanel Spacing="8">
-                    <TextBlock Text="Behavior"
-                               Classes="heading" />
-                    <CheckBox IsChecked="{Binding BackAndForth}"
-                              Content="Alternate movement directions"
-                              HorizontalAlignment="Left"
-                              ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction." />
-                    <CheckBox IsChecked="{Binding EnableUserInterventionDetection}"
-                              Content="Stop on manual mouse movement"
-                              HorizontalAlignment="Left"
-                              ToolTip.Tip="When enabled, mouse jiggling will automatically stop if you move the mouse yourself" />
+            <!-- Behavior Section -->
+            <Border Classes="surface">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <mi:MaterialIcon Kind="TuneVariant" Width="20" Height="20"
+                                         Foreground="{DynamicResource PrimaryLightColor}" />
+                        <TextBlock Text="Behavior" Classes="sectionTitle" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <ToggleSwitch IsChecked="{Binding BackAndForth}"
+                                  Content="Alternate movement directions"
+                                  ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction." />
+
+                    <ToggleSwitch IsChecked="{Binding EnableUserInterventionDetection}"
+                                  Content="Stop on manual mouse movement"
+                                  ToolTip.Tip="When enabled, mouse jiggling will automatically stop if you move the mouse yourself" />
                 </StackPanel>
             </Border>
 
-            <!-- Mouse Click (inline) -->
-            <Border Grid.Row="2" Classes="card">
-                <StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
-                    <TextBlock Text="Mouse Click"
-                               Classes="subheading"
-                               Margin="0"
-                               VerticalAlignment="Center" />
-                    <CheckBox IsChecked="{Binding EnableClick}"
-                              Content="Enable"
-                              VerticalAlignment="Center"
-                              ToolTip.Tip="When enabled, a mouse click will be performed at the configured interval" />
-                    <RadioButton Content="Left"
-                                 IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=1}"
-                                 GroupName="SimpleClickButton"
-                                 IsEnabled="{Binding EnableClick}"
-                                 VerticalAlignment="Center"
-                                 ToolTip.Tip="Perform left mouse clicks" />
-                    <RadioButton Content="Right"
-                                 IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=2}"
-                                 GroupName="SimpleClickButton"
-                                 IsEnabled="{Binding EnableClick}"
-                                 VerticalAlignment="Center"
-                                 ToolTip.Tip="Perform right mouse clicks" />
-                    <Label Content="Every (sec):"
-                           VerticalAlignment="Center"
-                           IsEnabled="{Binding EnableClick}"
-                           ToolTip.Tip="How often to click (in seconds)" />
-                    <TextBox Text="{Binding ClickIntervalSeconds}" Width="60"
-                             VerticalAlignment="Center"
-                             IsEnabled="{Binding EnableClick}"
-                             ToolTip.Tip="Click interval in seconds" />
+            <!-- Mouse Click Section -->
+            <Border Classes="surface">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <mi:MaterialIcon Kind="Mouse" Width="20" Height="20"
+                                         Foreground="{DynamicResource PrimaryLightColor}" />
+                        <TextBlock Text="Mouse Click" Classes="sectionTitle" VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <ToggleSwitch IsChecked="{Binding EnableClick}"
+                                  Content="Enable mouse clicking"
+                                  ToolTip.Tip="When enabled, a mouse click will be performed at the configured interval" />
+
+                    <StackPanel Orientation="Horizontal" Spacing="16" IsEnabled="{Binding EnableClick}">
+                        <RadioButton Content="Left click"
+                                     IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=1}"
+                                     GroupName="SimpleClickButton"
+                                     ToolTip.Tip="Perform left mouse clicks" />
+                        <RadioButton Content="Right click"
+                                     IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=2}"
+                                     GroupName="SimpleClickButton"
+                                     ToolTip.Tip="Perform right mouse clicks" />
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,24,*" IsEnabled="{Binding EnableClick}">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Interval (sec)" Classes="fieldLabel" />
+                            <NumericUpDown Value="{Binding ClickIntervalSeconds}"
+                                     ToolTip.Tip="How often to click (in seconds)" />
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- Settings Buttons -->
-            <StackPanel Grid.Row="3"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        Spacing="15"
-                        Margin="0,0,0,0">
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,4,0,0" HorizontalAlignment="Right">
                 <Button Command="{Binding SaveSettingsCommand}"
-                        Content="Save Settings"
-                        Width="150"
-                        HorizontalContentAlignment="Center"
-                        ToolTip.Tip="Save your current settings for next time" />
+                        ToolTip.Tip="Save your current settings for next time">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="ContentSaveOutline" Width="18" Height="18" />
+                        <TextBlock Text="Save Settings" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
                 <Button Command="{Binding RestoreDefaultsCommand}"
-                        Content="Reset to Defaults"
                         Classes="secondary"
-                        HorizontalContentAlignment="Center"
-                        Width="150"
-                        ToolTip.Tip="Restore all settings to their original values" />
+                        ToolTip.Tip="Restore all settings to their original values">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <mi:MaterialIcon Kind="Restart" Width="18" Height="18" />
+                        <TextBlock Text="Reset to Defaults" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
-        </Grid>
+        </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -19,4 +19,13 @@
     <Color x:Key="StopButtonColor">#C62828</Color>
     <Color x:Key="StopButtonHoverColor">#E53935</Color>
     <Color x:Key="BorderLightColor">#444444</Color>
-</ResourceDictionary> 
+
+    <!-- Sidebar & Surface Colors -->
+    <Color x:Key="SidebarBackgroundColor">#1A1A1A</Color>
+    <Color x:Key="SidebarItemHoverColor">#2A2A2A</Color>
+    <Color x:Key="SidebarItemActiveBackgroundColor">#2D2754</Color>
+    <Color x:Key="SurfaceColor">#262626</Color>
+    <Color x:Key="SurfaceElevatedColor">#2E2E2E</Color>
+    <Color x:Key="StatusBarBackgroundColor">#1C1C1C</Color>
+    <Color x:Key="SeparatorColor">#333333</Color>
+</ResourceDictionary>

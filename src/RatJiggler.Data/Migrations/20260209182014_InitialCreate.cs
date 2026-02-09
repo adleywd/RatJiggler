@@ -5,7 +5,7 @@
 namespace RatJiggler.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,9 @@ namespace RatJiggler.Data.Migrations
                     SelectedTabIndex = table.Column<int>(type: "INTEGER", nullable: false),
                     AutoStartMovement = table.Column<bool>(type: "INTEGER", nullable: false),
                     MinimizeToTray = table.Column<bool>(type: "INTEGER", nullable: false),
-                    StartMinimizedToTray = table.Column<bool>(type: "INTEGER", nullable: false)
+                    StartMinimizedToTray = table.Column<bool>(type: "INTEGER", nullable: false),
+                    HotkeyModifiers = table.Column<int>(type: "INTEGER", nullable: false),
+                    HotkeyKey = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +48,10 @@ namespace RatJiggler.Data.Migrations
                     PaddingPercentage = table.Column<float>(type: "REAL", nullable: false),
                     RandomSeed = table.Column<int>(type: "INTEGER", nullable: true),
                     EnableUserInterventionDetection = table.Column<bool>(type: "INTEGER", nullable: false),
-                    MovementThresholdInPixels = table.Column<int>(type: "INTEGER", nullable: false)
+                    MovementThresholdInPixels = table.Column<int>(type: "INTEGER", nullable: false),
+                    EnableClick = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ClickButton = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClickIntervalSeconds = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -62,7 +67,11 @@ namespace RatJiggler.Data.Migrations
                     MoveX = table.Column<int>(type: "INTEGER", nullable: false),
                     MoveY = table.Column<int>(type: "INTEGER", nullable: false),
                     Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    BackAndForth = table.Column<bool>(type: "INTEGER", nullable: false)
+                    BackAndForth = table.Column<bool>(type: "INTEGER", nullable: false),
+                    EnableClick = table.Column<bool>(type: "INTEGER", nullable: false),
+                    ClickButton = table.Column<int>(type: "INTEGER", nullable: false),
+                    ClickIntervalSeconds = table.Column<int>(type: "INTEGER", nullable: false),
+                    EnableUserInterventionDetection = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,18 +80,18 @@ namespace RatJiggler.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "ApplicationSettings",
-                columns: new[] { "Id", "AutoStartMovement", "MinimizeToTray", "SelectedTabIndex", "StartMinimizedToTray" },
-                values: new object[] { 1, false, false, 0, false });
+                columns: new[] { "Id", "AutoStartMovement", "HotkeyKey", "HotkeyModifiers", "MinimizeToTray", "SelectedTabIndex", "StartMinimizedToTray" },
+                values: new object[] { 1, false, 98, 3, false, 0, false });
 
             migrationBuilder.InsertData(
                 table: "RealisticMovementSettings",
-                columns: new[] { "Id", "EnableRandomPauses", "EnableStepPauses", "EnableUserInterventionDetection", "HorizontalBias", "MaxSpeed", "MinSpeed", "MovementThresholdInPixels", "PaddingPercentage", "RandomPauseMax", "RandomPauseMin", "RandomPauseProbability", "RandomSeed", "StepPauseMax", "StepPauseMin", "VerticalBias" },
-                values: new object[] { 1, true, true, true, 0f, 7, 3, 10, 0.1f, 500, 100, 10, null, 50, 20, 0f });
+                columns: new[] { "Id", "ClickButton", "ClickIntervalSeconds", "EnableClick", "EnableRandomPauses", "EnableStepPauses", "EnableUserInterventionDetection", "HorizontalBias", "MaxSpeed", "MinSpeed", "MovementThresholdInPixels", "PaddingPercentage", "RandomPauseMax", "RandomPauseMin", "RandomPauseProbability", "RandomSeed", "StepPauseMax", "StepPauseMin", "VerticalBias" },
+                values: new object[] { 1, 1, 5, false, true, true, true, 0f, 7, 3, 10, 0.1f, 500, 100, 10, null, 50, 20, 0f });
 
             migrationBuilder.InsertData(
                 table: "SimpleMovementSettings",
-                columns: new[] { "Id", "BackAndForth", "Duration", "MoveX", "MoveY" },
-                values: new object[] { 1, true, 60, 50, 0 });
+                columns: new[] { "Id", "BackAndForth", "ClickButton", "ClickIntervalSeconds", "Duration", "EnableClick", "EnableUserInterventionDetection", "MoveX", "MoveY" },
+                values: new object[] { 1, true, 1, 5, 60, false, true, 50, 0 });
         }
 
         /// <inheritdoc />

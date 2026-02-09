@@ -2,17 +2,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:RatJiggler.Views"
         xmlns:vm="using:RatJiggler.ViewModels"
+        xmlns:converters="clr-namespace:RatJiggler.Converters"
+        xmlns:mi="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="680"
         x:Class="RatJiggler.Views.MainWindow"
+        x:Name="MainWin"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/logo.ico"
         Title="{Binding Title}"
-        MinHeight="580"
-        MinWidth="640"
-        Height="800"
-        Width="700"
+        MinHeight="560"
+        MinWidth="780"
+        Height="850"
+        Width="850"
         CanResize="True"
         ShowInTaskbar="{Binding ShowInTaskbar}"
         WindowState="{Binding WindowState, Mode=TwoWay}"
@@ -25,75 +28,119 @@
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <!-- Key Bindings for Keyboard Shortcuts -->
+    <!-- Key Bindings -->
     <Window.KeyBindings>
-        <!-- Ctrl + R to Start Movement -->
         <KeyBinding Gesture="Ctrl+R"
                     Command="{Binding StartMouseMovementByHotkeyCommand}" />
-
-        <!-- Ctrl + C to Stop Movement -->
         <KeyBinding Gesture="Ctrl+C"
                     Command="{Binding StopMovementCommand}" />
     </Window.KeyBindings>
 
-    <Border Background="{DynamicResource BackgroundMediumColor}" CornerRadius="8" Margin="5">
-        <Grid Margin="20">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />  <!-- Action Bar -->
-                <RowDefinition Height="*" />     <!-- Settings Tabs -->
-                <RowDefinition Height="Auto" />  <!-- App Settings Expander -->
-            </Grid.RowDefinitions>
+    <!-- Root: Sidebar + Content -->
+    <Grid ColumnDefinitions="Auto,*">
 
-            <!-- Row 0: Action Bar -->
-            <Border Grid.Row="0"
-                    Background="{DynamicResource BackgroundDarkColor}"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource BorderLightColor}"
-                    CornerRadius="5"
-                    Padding="12"
-                    Margin="0,0,0,15">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />   <!-- Toggle Button -->
-                        <ColumnDefinition Width="*" />      <!-- Status Message -->
-                        <ColumnDefinition Width="Auto" />   <!-- Hotkey Badge -->
-                    </Grid.ColumnDefinitions>
+        <!-- ═══════════════════════════════════════ -->
+        <!--  SIDEBAR                                -->
+        <!-- ═══════════════════════════════════════ -->
+        <Border Grid.Column="0" Classes="sidebar">
+            <DockPanel>
+                <!-- Top: Logo + App Name -->
+                <StackPanel DockPanel.Dock="Top" Margin="16,20,16,24" Spacing="8">
+                    <Image Source="/Assets/logo-no-background.png"
+                           Width="48" Height="48"
+                           HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding Title}"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Foreground="White"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
 
-                    <!-- Toggle Button -->
-                    <Panel Grid.Column="0" VerticalAlignment="Center">
-                        <Button Classes="toggleStart"
-                                Command="{Binding ToggleMovementCommand}"
-                                Content="Start"
-                                IsVisible="{Binding !IsMovementRunning}" />
-                        <Button Classes="toggleStop"
-                                Command="{Binding ToggleMovementCommand}"
-                                Content="Stop"
-                                IsVisible="{Binding IsMovementRunning}" />
-                    </Panel>
+                <!-- Bottom: Start/Stop Button -->
+                <Panel DockPanel.Dock="Bottom" Margin="12,0,12,16">
+                    <Button Classes="toggleStart"
+                            Command="{Binding ToggleMovementCommand}"
+                            IsVisible="{Binding !IsMovementRunning}">
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                            <mi:MaterialIcon Kind="Play" Width="20" Height="20" />
+                            <TextBlock Text="Start" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="toggleStop"
+                            Command="{Binding ToggleMovementCommand}"
+                            IsVisible="{Binding IsMovementRunning}">
+                        <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                            <mi:MaterialIcon Kind="Stop" Width="20" Height="20" />
+                            <TextBlock Text="Stop" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Panel>
 
+                <!-- Middle: Navigation Items -->
+                <StackPanel Spacing="2" Margin="0,8,0,0">
+                    <!-- Simple -->
+                    <RadioButton Classes="sidebarItem"
+                                 IsChecked="{Binding SelectedTabIndex, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=0}">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <mi:MaterialIcon Kind="CursorMove" Width="20" Height="20" />
+                            <TextBlock Text="Simple" VerticalAlignment="Center" FontSize="14" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <!-- Realistic -->
+                    <RadioButton Classes="sidebarItem"
+                                 IsChecked="{Binding SelectedTabIndex, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=1}">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <mi:MaterialIcon Kind="GestureTapButton" Width="20" Height="20" />
+                            <TextBlock Text="Realistic" VerticalAlignment="Center" FontSize="14" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <!-- Settings -->
+                    <RadioButton Classes="sidebarItem"
+                                 IsChecked="{Binding SelectedTabIndex, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=2}">
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <mi:MaterialIcon Kind="CogOutline" Width="20" Height="20" />
+                            <TextBlock Text="Settings" VerticalAlignment="Center" FontSize="14" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!--  CONTENT AREA                           -->
+        <!-- ═══════════════════════════════════════ -->
+        <DockPanel Grid.Column="1">
+
+            <!-- Header Bar -->
+            <Border DockPanel.Dock="Top" Classes="headerBar">
+                <Grid ColumnDefinitions="*,Auto">
                     <!-- Status Message -->
-                    <Border Grid.Column="1"
+                    <Border Grid.Column="0"
                             Classes="statusBar"
                             Background="{Binding StatusMessageBackground}"
-                            Margin="15,0"
-                            VerticalAlignment="Center">
-                        <TextBlock Text="{Binding StatusMessage}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Foreground="{Binding StatusMessageColor}" />
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left"
+                            IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <mi:MaterialIcon Kind="InformationOutline" Width="16" Height="16"
+                                             Foreground="{Binding StatusMessageColor}" />
+                            <TextBlock Text="{Binding StatusMessage}"
+                                       VerticalAlignment="Center"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="{Binding StatusMessageColor}" />
+                        </StackPanel>
                     </Border>
 
                     <!-- Hotkey Badge -->
-                    <Border Grid.Column="2"
+                    <Border Grid.Column="1"
                             Classes="hotkeyBadge"
                             VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <TextBlock Text="Hotkey:"
-                                       VerticalAlignment="Center"
-                                       Foreground="{DynamicResource TextTertiaryColor}"
-                                       FontSize="12" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <mi:MaterialIcon Kind="KeyboardOutline" Width="16" Height="16"
+                                             Foreground="{DynamicResource TextTertiaryColor}" />
                             <TextBlock Text="{Binding GlobalHotkeyDisplayString}"
                                        VerticalAlignment="Center"
                                        FontWeight="SemiBold"
@@ -103,139 +150,115 @@
                 </Grid>
             </Border>
 
-            <!-- Row 1: Settings Tabs -->
-            <Border Grid.Row="1"
-                    Background="{DynamicResource BackgroundDarkColor}"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource BorderLightColor}"
-                    CornerRadius="5"
-                    Padding="10"
-                    Margin="0,0,0,15">
+            <!-- Page Content (switched by SelectedTabIndex) -->
+            <Panel>
+                <!-- Page 0: Simple Movement -->
+                <local:SimpleMovementView
+                    DataContext="{Binding SimpleMovementViewModel}"
+                    IsVisible="{Binding #MainWin.((vm:MainWindowViewModel)DataContext).SelectedTabIndex, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=0}" />
 
-                <!-- Tab Control for Modes -->
-                <TabControl SelectedIndex="{Binding SelectedTabIndex}"
-                            HorizontalAlignment="Stretch"
-                            TabStripPlacement="Top">
-                    <TabControl.Styles>
-                        <!-- Style for TabItem -->
-                        <Style Selector="TabItem">
-                            <Setter Property="Width" Value="280"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Border Background="{TemplateBinding Background}"
-                                                BorderThickness="0"
-                                                BorderBrush="{TemplateBinding BorderBrush}">
-                                            <ContentPresenter Content="{TemplateBinding Header}"
-                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                        <!-- Style for TextBlock in TabItem Header -->
-                        <Style Selector="TabItem TextBlock">
-                            <Setter Property="TextDecorations">
-                                <Setter.Value>
-                                    <TextDecorationCollection/>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </TabControl.Styles>
+                <!-- Page 1: Realistic Movement -->
+                <local:RealisticMovementView
+                    DataContext="{Binding RealisticMovementViewModel}"
+                    IsVisible="{Binding #MainWin.((vm:MainWindowViewModel)DataContext).SelectedTabIndex, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=1}" />
 
-                    <!-- Tabs -->
-                    <TabItem Cursor="Hand">
-                        <TabItem.Header>
-                            <StackPanel>
-                                <TextBlock Text="Simple" HorizontalAlignment="Center" />
-                                <TextBlock Text="Fixed direction movement" FontSize="10" Opacity="0.6" HorizontalAlignment="Center" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <local:SimpleMovementView DataContext="{Binding SimpleMovementViewModel}" />
-                    </TabItem>
-                    <TabItem Cursor="Hand">
-                        <TabItem.Header>
-                            <StackPanel>
-                                <TextBlock Text="Realistic" HorizontalAlignment="Center" />
-                                <TextBlock Text="Natural random movement" FontSize="10" Opacity="0.6" HorizontalAlignment="Center" />
-                            </StackPanel>
-                        </TabItem.Header>
-                        <local:RealisticMovementView DataContext="{Binding RealisticMovementViewModel}" />
-                    </TabItem>
-                </TabControl>
-            </Border>
-
-            <!-- Row 2: App Settings Expander -->
-            <Expander Grid.Row="2"
-                      Header="App Settings"
-                      IsExpanded="False"
-                      HorizontalAlignment="Stretch">
-                <Border Background="{DynamicResource BackgroundDarkColor}"
-                        CornerRadius="0,0,5,5"
-                        Padding="15,10">
-                    <StackPanel Spacing="8">
-                        <!-- Auto Start Checkbox -->
-                        <CheckBox IsChecked="{Binding AutoStartMovement}"
-                                  Content="Auto-start when application launches"
-                                  ToolTip.Tip="When enabled, mouse movement will start automatically when the application starts"/>
-
-                        <!-- Minimize to Tray Checkbox -->
-                        <CheckBox IsChecked="{Binding MinimizeToTray}"
-                                  Content="Minimize to tray"
-                                  ToolTip.Tip="When enabled, the application will minimize to the system tray when minimized"/>
-
-                        <!-- Start Minimized to Tray Checkbox (indented) -->
-                        <CheckBox IsChecked="{Binding StartMinimizedToTray}"
-                                  IsEnabled="{Binding MinimizeToTray}"
-                                  Margin="24,0,0,0"
-                                  Content="Start minimized to tray"
-                                  ToolTip.Tip="When enabled, the application will start minimized to the system tray when launched"/>
-
-                        <!-- Separator -->
-                        <Separator Margin="0,4" />
-
-                        <!-- Global Hotkey -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Global Hotkey:" VerticalAlignment="Center" Margin="0,0,8,0" />
-                            <Border Background="{DynamicResource BackgroundMediumColor}"
-                                    BorderBrush="{DynamicResource BorderLightColor}"
-                                    BorderThickness="1"
-                                    CornerRadius="3"
-                                    Padding="8,4"
-                                    VerticalAlignment="Center"
-                                    Margin="0,0,8,0">
-                                <TextBlock Text="{Binding GlobalHotkeyDisplayString}"
-                                           IsVisible="{Binding !IsCapturingHotkey}"
-                                           VerticalAlignment="Center"
-                                           FontWeight="SemiBold" />
-                            </Border>
-                            <TextBlock Text="Press keys..."
-                                       IsVisible="{Binding IsCapturingHotkey}"
-                                       VerticalAlignment="Center"
-                                       FontStyle="Italic"
-                                       Opacity="0.7"
-                                       Margin="0,0,8,0" />
-                            <Button Content="Change"
-                                    Command="{Binding StartCapturingHotkeyCommand}"
-                                    IsVisible="{Binding !IsCapturingHotkey}"
-                                    Padding="8,4"
-                                    Margin="0,0,4,0"
-                                    ToolTip.Tip="Click to set a new global hotkey" />
-                            <Button Content="Cancel"
-                                    Command="{Binding CancelCapturingHotkeyCommand}"
-                                    IsVisible="{Binding IsCapturingHotkey}"
-                                    Padding="8,4"
-                                    Margin="0,0,4,0" />
-                            <Button Content="Reset"
-                                    Command="{Binding ResetHotkeyCommand}"
-                                    Padding="8,4"
-                                    ToolTip.Tip="Reset hotkey to Ctrl+Shift+F9" />
+                <!-- Page 2: Settings -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              IsVisible="{Binding SelectedTabIndex, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=2}">
+                    <StackPanel MaxWidth="600" Margin="24,20" Spacing="0">
+                        <!-- Page Header -->
+                        <StackPanel Margin="0,0,0,20">
+                            <TextBlock Text="Settings" Classes="pageTitle" />
+                            <TextBlock Text="Configure application behavior and preferences" Classes="pageSubtitle" />
                         </StackPanel>
+
+                        <!-- Startup Section -->
+                        <Border Classes="surface">
+                            <StackPanel Spacing="16">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <mi:MaterialIcon Kind="RocketLaunchOutline" Width="20" Height="20"
+                                                     Foreground="{DynamicResource PrimaryLightColor}" />
+                                    <TextBlock Text="Startup" Classes="sectionTitle" VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <ToggleSwitch IsChecked="{Binding AutoStartMovement}"
+                                              Content="Auto-start movement on launch"
+                                              ToolTip.Tip="When enabled, mouse movement will start automatically when the application starts" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Tray Section -->
+                        <Border Classes="surface">
+                            <StackPanel Spacing="16">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <mi:MaterialIcon Kind="TrayArrowDown" Width="20" Height="20"
+                                                     Foreground="{DynamicResource PrimaryLightColor}" />
+                                    <TextBlock Text="System Tray" Classes="sectionTitle" VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <ToggleSwitch IsChecked="{Binding MinimizeToTray}"
+                                              Content="Minimize to tray"
+                                              ToolTip.Tip="When enabled, the application will minimize to the system tray" />
+
+                                <ToggleSwitch IsChecked="{Binding StartMinimizedToTray}"
+                                              IsEnabled="{Binding MinimizeToTray}"
+                                              Content="Start minimized to tray"
+                                              Margin="24,0,0,0"
+                                              ToolTip.Tip="When enabled, the application will start minimized to the system tray" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Hotkey Section -->
+                        <Border Classes="surface">
+                            <StackPanel Spacing="16">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <mi:MaterialIcon Kind="KeyboardOutline" Width="20" Height="20"
+                                                     Foreground="{DynamicResource PrimaryLightColor}" />
+                                    <TextBlock Text="Global Hotkey" Classes="sectionTitle" VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <StackPanel Spacing="12">
+                                    <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                        <Border Background="{DynamicResource BackgroundMediumColor}"
+                                                BorderBrush="{DynamicResource BorderLightColor}"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="12,8"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding GlobalHotkeyDisplayString}"
+                                                       IsVisible="{Binding !IsCapturingHotkey}"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="14" />
+                                        </Border>
+                                        <TextBlock Text="Press keys..."
+                                                   IsVisible="{Binding IsCapturingHotkey}"
+                                                   VerticalAlignment="Center"
+                                                   FontStyle="Italic"
+                                                   Opacity="0.7" />
+                                        <Button Content="Change"
+                                                Command="{Binding StartCapturingHotkeyCommand}"
+                                                IsVisible="{Binding !IsCapturingHotkey}"
+                                                Padding="12,8"
+                                                ToolTip.Tip="Click to set a new global hotkey" />
+                                        <Button Content="Cancel"
+                                                Command="{Binding CancelCapturingHotkeyCommand}"
+                                                IsVisible="{Binding IsCapturingHotkey}"
+                                                Classes="secondary"
+                                                Padding="12,8" />
+                                        <Button Content="Reset"
+                                                Command="{Binding ResetHotkeyCommand}"
+                                                Classes="secondary"
+                                                Padding="12,8"
+                                                ToolTip.Tip="Reset hotkey to Ctrl+Shift+F9" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
-            </Expander>
-        </Grid>
-    </Border>
+                </ScrollViewer>
+            </Panel>
+        </DockPanel>
+    </Grid>
 </Window>

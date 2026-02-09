@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -119,6 +120,15 @@ public partial class RealisticMovementViewModel : ViewModelBase
         {
             _logger.LogError(ex, "Error loading realistic movement settings");
             _statusMessageService.SetStatusMessage("Error loading settings", "Red");
+        }
+    }
+
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (e.PropertyName != nameof(IsRunning) && IsRunning)
+        {
+            StopMovement();
         }
     }
 

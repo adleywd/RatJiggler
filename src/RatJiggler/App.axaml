@@ -1,5 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              x:Class="RatJiggler.App"
              x:DataType="vm:ApplicationViewModel"
              xmlns:local="using:RatJiggler"
@@ -9,9 +10,10 @@
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
-  
+
     <Application.Styles>
         <FluentTheme />
+        <materialIcons:MaterialIconStyles />
         <StyleInclude Source="avares://RatJiggler/AppStyles.axaml"/>
     </Application.Styles>
     

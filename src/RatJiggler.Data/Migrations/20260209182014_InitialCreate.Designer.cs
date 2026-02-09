@@ -10,8 +10,8 @@ using RatJiggler.Data;
 namespace RatJiggler.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260209012308_AddClickInterval")]
-    partial class AddClickInterval
+    [Migration("20260209182014_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

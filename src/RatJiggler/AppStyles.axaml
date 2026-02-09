@@ -1,122 +1,178 @@
 <Styles xmlns="https://github.com/avaloniaui"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Text Styles -->
-    <Style Selector="TextBlock.heading">
-        <Setter Property="FontSize" Value="18"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryLightColor}"/>
-        <Setter Property="Margin" Value="0,0,0,10"/>
-    </Style>
-    
-    <Style Selector="TextBlock.subheading">
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontWeight" Value="Medium"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryLightColor}"/>
-        <Setter Property="Margin" Value="0,5,0,5"/>
-    </Style>
-    
-    <!-- Button Styles -->
-    <Style Selector="Button">
-        <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Padding" Value="12,8"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Cursor" Value="Hand"/>
-    </Style>
-    
-    <Style Selector="Button:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource PrimaryLightColor}"/>
-    </Style>
-    
-    <Style Selector="Button:pressed /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource PrimaryDarkColor}"/>
-    </Style>
-    
-    <Style Selector="Button.secondary">
-        <Setter Property="Background" Value="{DynamicResource SecondaryButtonColor}"/>
-    </Style>
-    
-    <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource SecondaryButtonHoverColor}"/>
-    </Style>
-    
-    <!-- Control Styles -->
-    <Style Selector="TextBox">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
-    </Style>
-    
-    <Style Selector="NumericUpDown">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
-    </Style>
-    
-    <Style Selector="CheckBox">
-        <Setter Property="Foreground" Value="White"/>
-    </Style>
-    
-    <!-- Tab Control Styles -->
-    <Style Selector="TabControl">
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="TabStripPlacement" Value="Top"/>
-    </Style>
-    
-    <Style Selector="TabControl WrapPanel">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
-        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-    </Style>
-    
-    <Style Selector="TabItem">
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Padding" Value="20,12"/>
-        <Setter Property="Margin" Value="0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-    </Style>
-    
-    <Style Selector="TabItem:selected">
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Background" Value="{DynamicResource TabSelectedColor}"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryLightColor}"/>
-        <Setter Property="BorderThickness" Value="0"/>
-    </Style>
-    
-    <Style Selector="TabItem:pointerover /template/ ContentPresenter">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
-    </Style>
-    
-    <!-- Main Window Style -->
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Window                                 -->
+    <!-- ═══════════════════════════════════════ -->
     <Style Selector="Window">
         <Setter Property="Background" Value="{DynamicResource BackgroundDarkColor}"/>
     </Style>
-    
-    <!-- Card Styles -->
-    <Style Selector="Border.card">
-        <Setter Property="Background" Value="{DynamicResource BackgroundLightColor}"/>
-        <Setter Property="CornerRadius" Value="5"/>
-        <Setter Property="Padding" Value="15"/>
-        <Setter Property="Margin" Value="0,0,0,15"/>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Typography                             -->
+    <!-- ═══════════════════════════════════════ -->
+    <Style Selector="TextBlock.pageTitle">
+        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="White"/>
     </Style>
 
-    <!-- Toggle Button Styles -->
+    <Style Selector="TextBlock.pageSubtitle">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextTertiaryColor}"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+    </Style>
+
+    <Style Selector="TextBlock.sectionTitle">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="TextBlock.fieldLabel">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryColor}"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Sidebar                                -->
+    <!-- ═══════════════════════════════════════ -->
+    <Style Selector="Border.sidebar">
+        <Setter Property="Background" Value="{DynamicResource SidebarBackgroundColor}"/>
+        <Setter Property="Width" Value="220"/>
+    </Style>
+
+    <!-- Sidebar nav item (RadioButton) -->
+    <Style Selector="RadioButton.sidebarItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryColor}"/>
+        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Margin" Value="8,2"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="GroupName" Value="SidebarNav"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style Selector="RadioButton.sidebarItem:pointerover /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource SidebarItemHoverColor}"/>
+    </Style>
+
+    <Style Selector="RadioButton.sidebarItem:checked">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="RadioButton.sidebarItem:checked /template/ Border">
+        <Setter Property="Background" Value="{DynamicResource SidebarItemActiveBackgroundColor}"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Surface Panels                         -->
+    <!-- ═══════════════════════════════════════ -->
+    <Style Selector="Border.surface">
+        <Setter Property="Background" Value="{DynamicResource SurfaceColor}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="20,16"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+
+    <Style Selector="Border.surfaceElevated">
+        <Setter Property="Background" Value="{DynamicResource SurfaceElevatedColor}"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Controls                               -->
+    <!-- ═══════════════════════════════════════ -->
+    <Style Selector="TextBox">
+        <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+        <Setter Property="Padding" Value="10,8"/>
+    </Style>
+
+    <Style Selector="NumericUpDown">
+        <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+    </Style>
+
+    <Style Selector="ToggleSwitch">
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style Selector="Separator">
+        <Setter Property="Background" Value="{DynamicResource SeparatorColor}"/>
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Margin" Value="0,8"/>
+    </Style>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Buttons                                -->
+    <!-- ═══════════════════════════════════════ -->
+    <Style Selector="Button">
+        <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Padding" Value="16,10"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryLightColor}"/>
+    </Style>
+
+    <Style Selector="Button:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource PrimaryDarkColor}"/>
+    </Style>
+
+    <Style Selector="Button.secondary">
+        <Setter Property="Background" Value="{DynamicResource SecondaryButtonColor}"/>
+    </Style>
+
+    <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SecondaryButtonHoverColor}"/>
+    </Style>
+
+    <Style Selector="Button.ghost">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+    </Style>
+
+    <Style Selector="Button.ghost:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource SurfaceElevatedColor}"/>
+    </Style>
+
+    <!-- Start / Stop pill buttons -->
     <Style Selector="Button.toggleStart">
         <Setter Property="Background" Value="{DynamicResource StartButtonColor}"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="16"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="MinWidth" Value="200"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Padding" Value="24,12"/>
+        <Setter Property="CornerRadius" Value="22"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
     </Style>
 
@@ -127,10 +183,11 @@
     <Style Selector="Button.toggleStop">
         <Setter Property="Background" Value="{DynamicResource StopButtonColor}"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="FontSize" Value="16"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="MinWidth" Value="200"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Padding" Value="24,12"/>
+        <Setter Property="CornerRadius" Value="22"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
     </Style>
 
@@ -138,19 +195,25 @@
         <Setter Property="Background" Value="{DynamicResource StopButtonHoverColor}"/>
     </Style>
 
-    <!-- Hotkey Badge Style -->
+    <!-- ═══════════════════════════════════════ -->
+    <!--  Header / Status Bar                    -->
+    <!-- ═══════════════════════════════════════ -->
+    <Style Selector="Border.headerBar">
+        <Setter Property="Background" Value="{DynamicResource StatusBarBackgroundColor}"/>
+        <Setter Property="Padding" Value="20,10"/>
+    </Style>
+
     <Style Selector="Border.hotkeyBadge">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundColor}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="CornerRadius" Value="4"/>
-        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="10,6"/>
     </Style>
 
-    <!-- Status Bar Style -->
     <Style Selector="Border.statusBar">
-        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="12,6"/>
     </Style>
 
-</Styles> 
+</Styles>

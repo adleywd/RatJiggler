@@ -82,9 +82,9 @@ public static class MouseUtility
             // If the distance moved exceeds the threshold, stop the realistic movement
             if (distanceMoved > mouseMovementDto.MovementThresholdInPixels)
             {
-                onStopped?.Invoke();
                 Console.WriteLine("Significant mouse movement detected. Stopping realistic movement...");
-                // break; // Exit the loop if the user moves the mouse significantly
+                onStopped?.Invoke();
+                break;
             }
         }
 
@@ -133,6 +133,34 @@ public static class MouseUtility
         }
     }
 }
+
+    /// <summary>
+    /// Performs a mouse click (down + up) with the specified button.
+    /// </summary>
+    /// <param name="button">1 for left click, 2 for right click.</param>
+    public static void Click(int button)
+    {
+        MOUSE_EVENT_FLAGS downFlag;
+        MOUSE_EVENT_FLAGS upFlag;
+
+        switch (button)
+        {
+            case 2:
+                downFlag = MOUSE_EVENT_FLAGS.MOUSEEVENTF_RIGHTDOWN;
+                upFlag = MOUSE_EVENT_FLAGS.MOUSEEVENTF_RIGHTUP;
+                break;
+            default:
+                downFlag = MOUSE_EVENT_FLAGS.MOUSEEVENTF_LEFTDOWN;
+                upFlag = MOUSE_EVENT_FLAGS.MOUSEEVENTF_LEFTUP;
+                break;
+        }
+
+        var downInput = CreateMouseInput(0, 0, downFlag);
+        SendInput(downInput);
+
+        var upInput = CreateMouseInput(0, 0, upFlag);
+        SendInput(upInput);
+    }
 
     /// <summary>
     /// Gets the current mouse position.

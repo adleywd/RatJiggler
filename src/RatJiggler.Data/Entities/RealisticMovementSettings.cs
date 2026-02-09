@@ -18,4 +18,7 @@ public class RealisticMovementSettings
     public int? RandomSeed { get; set; } = null;
     public bool EnableUserInterventionDetection { get; set; } = true;
     public int MovementThresholdInPixels { get; set; } = 10;
+    public bool EnableClick { get; set; }
+    public int ClickButton { get; set; } = 1;
+    public int ClickIntervalSeconds { get; set; } = 5;
 } 

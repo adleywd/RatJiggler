@@ -43,6 +43,9 @@ public class SettingsService : ISettingsService
             existingSettings.MoveY = settings.MoveY;
             existingSettings.Duration = settings.Duration;
             existingSettings.BackAndForth = settings.BackAndForth;
+            existingSettings.EnableClick = settings.EnableClick;
+            existingSettings.ClickButton = settings.ClickButton;
+            existingSettings.EnableUserInterventionDetection = settings.EnableUserInterventionDetection;
         }
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
@@ -84,6 +87,8 @@ public class SettingsService : ISettingsService
             existingSettings.RandomSeed = settings.RandomSeed;
             existingSettings.EnableUserInterventionDetection = settings.EnableUserInterventionDetection;
             existingSettings.MovementThresholdInPixels = settings.MovementThresholdInPixels;
+            existingSettings.EnableClick = settings.EnableClick;
+            existingSettings.ClickButton = settings.ClickButton;
         }
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
@@ -114,6 +119,8 @@ public class SettingsService : ISettingsService
             existingSettings.AutoStartMovement = settings.AutoStartMovement;
             existingSettings.MinimizeToTray = settings.MinimizeToTray;
             existingSettings.StartMinimizedToTray = settings.StartMinimizedToTray;
+            existingSettings.HotkeyModifiers = settings.HotkeyModifiers;
+            existingSettings.HotkeyKey = settings.HotkeyKey;
         }
         await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }

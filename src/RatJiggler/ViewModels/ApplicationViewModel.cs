@@ -29,6 +29,18 @@ public partial class ApplicationViewModel : ViewModelBase
     {
         _mainWindow.WindowState = WindowState.Normal;
         _mainWindow.Show();
+
+        // Center on screen — WindowStartupLocation only applies on first show,
+        // so we need to manually center when restoring from tray.
+        var screen = _mainWindow.Screens.Primary;
+        if (screen != null)
+        {
+            var scaling = screen.Scaling;
+            var x = (int)((screen.WorkingArea.Width - _mainWindow.Width * scaling) / 2) + screen.WorkingArea.X;
+            var y = (int)((screen.WorkingArea.Height - _mainWindow.Height * scaling) / 2) + screen.WorkingArea.Y;
+            _mainWindow.Position = new PixelPoint(x, y);
+        }
+
         _mainWindow.BringIntoView();
         _mainWindow.Focus();
     }

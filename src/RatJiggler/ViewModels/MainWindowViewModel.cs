@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using RatJiggler.Data.Entities;
 using RatJiggler.Services.Interfaces;
-using RatJiggler.Views;
 
 namespace RatJiggler.ViewModels;
 
@@ -17,6 +16,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ILogger<MainWindowViewModel> _logger;
     private readonly ISettingsService _settingsService;
     private readonly IStatusMessageService _statusMessageService;
+    private readonly IGlobalHotkeyService _globalHotkeyService;
 
     [ObservableProperty]
     private string _statusMessage = string.Empty;
@@ -29,10 +29,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private WindowState _windowState;
-    
+
     [ObservableProperty]
     private bool _showInTaskbar = true;
-    
+
     [ObservableProperty]
     private int _selectedTabIndex;
 
@@ -41,13 +41,25 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isMovementRunning;
-    
+
     [ObservableProperty]
     private bool _minimizeToTray;
-    
+
     [ObservableProperty]
     private bool _startMinimizedToTray;
-    
+
+    [ObservableProperty]
+    private int _hotkeyModifiers = 3;  // KeyModifiers.Control | KeyModifiers.Shift
+
+    [ObservableProperty]
+    private int _hotkeyKey = 98;  // Key.F9
+
+    [ObservableProperty]
+    private string _globalHotkeyDisplayString = "Ctrl+Shift+F9";
+
+    [ObservableProperty]
+    private bool _isCapturingHotkey;
+
     public string Title => $"RatJiggler v{Version}";
 
     public string StatusMessageBackground => StatusMessageColor switch
@@ -57,6 +69,9 @@ public partial class MainWindowViewModel : ViewModelBase
         "Yellow" => "#444411",
         _ => "#33225A"  // Default for Purple
     };
+
+    public string ToggleButtonText => IsMovementRunning ? "Stop" : "Start";
+
     public SimpleMovementViewModel SimpleMovementViewModel { get; }
     public RealisticMovementViewModel RealisticMovementViewModel { get; }
 
@@ -64,27 +79,35 @@ public partial class MainWindowViewModel : ViewModelBase
         ILogger<MainWindowViewModel> logger,
         ISettingsService settingsService,
         IStatusMessageService statusMessageService,
+        IGlobalHotkeyService globalHotkeyService,
         SimpleMovementViewModel simpleMovementViewModel,
         RealisticMovementViewModel realisticMovementViewModel)
     {
         _logger = logger;
         _settingsService = settingsService;
         _statusMessageService = statusMessageService;
+        _globalHotkeyService = globalHotkeyService;
 
         _statusMessageService.StatusMessageChanged += OnStatusMessageChanged;
+        _globalHotkeyService.HotkeyPressed += OnGlobalHotkeyPressed;
 
         SimpleMovementViewModel = simpleMovementViewModel;
         RealisticMovementViewModel = realisticMovementViewModel;
 
+        SimpleMovementViewModel.PropertyChanged += OnChildViewModelPropertyChanged;
+        RealisticMovementViewModel.PropertyChanged += OnChildViewModelPropertyChanged;
+
         LoadSettings();
+
+        _globalHotkeyService.Register(HotkeyModifiers, HotkeyKey);
 
         if (AutoStartMovement)
         {
             StartMouseMovementByHotkeyCommand.Execute(null);
         }
     }
-    
-        
+
+
     partial void OnWindowStateChanged(WindowState value)
     {
         if (!MinimizeToTray)
@@ -94,14 +117,14 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         ShowInTaskbar = value != WindowState.Minimized;
     }
-    
+
     partial void OnMinimizeToTrayChanged(bool value)
     {
         if (value == false)
         {
             StartMinimizedToTray = false;
         }
-        
+
         SaveSettings();
     }
 
@@ -109,12 +132,27 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         SaveSettings();
     }
-    
+
     partial void OnAutoStartMovementChanged(bool value)
     {
         SaveSettings();
     }
-    
+
+    private void OnChildViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SimpleMovementViewModel.IsRunning))
+        {
+            if (SelectedTabIndex == 0 && sender == SimpleMovementViewModel)
+            {
+                IsMovementRunning = SimpleMovementViewModel.IsRunning;
+            }
+            else if (SelectedTabIndex != 0 && sender == RealisticMovementViewModel)
+            {
+                IsMovementRunning = RealisticMovementViewModel.IsRunning;
+            }
+        }
+    }
+
     private void OnStatusMessageChanged(object? sender, StatusMessageEventArgs e)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
@@ -122,6 +160,21 @@ public partial class MainWindowViewModel : ViewModelBase
             StatusMessage = e.Message;
             StatusMessageColor = e.Color;
             OnPropertyChanged(nameof(StatusMessageBackground));
+        });
+    }
+
+    private void OnGlobalHotkeyPressed(object? sender, EventArgs e)
+    {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            if (IsMovementRunning)
+            {
+                StopMovementCommand.Execute(null);
+            }
+            else
+            {
+                StartMouseMovementByHotkeyCommand.Execute(null);
+            }
         });
     }
 
@@ -144,8 +197,26 @@ public partial class MainWindowViewModel : ViewModelBase
             }
             IsMovementRunning = RealisticMovementViewModel.IsRunning;
         }
-        
+
         SaveSettings();
+    }
+
+    partial void OnIsMovementRunningChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ToggleButtonText));
+    }
+
+    [RelayCommand]
+    private void ToggleMovement()
+    {
+        if (IsMovementRunning)
+        {
+            StopMovementCommand.Execute(null);
+        }
+        else
+        {
+            StartMouseMovementByHotkeyCommand.Execute(null);
+        }
     }
 
     [RelayCommand]
@@ -193,7 +264,36 @@ public partial class MainWindowViewModel : ViewModelBase
             _statusMessageService.SetStatusMessage("Error stopping movement", "Red");
         }
     }
-    
+
+    public void SetHotkey(int modifiers, int key)
+    {
+        _globalHotkeyService.Unregister();
+        HotkeyModifiers = modifiers;
+        HotkeyKey = key;
+        GlobalHotkeyDisplayString = _globalHotkeyService.GetDisplayString(modifiers, key);
+        IsCapturingHotkey = false;
+        _globalHotkeyService.Register(HotkeyModifiers, HotkeyKey);
+        SaveSettings();
+    }
+
+    [RelayCommand]
+    private void StartCapturingHotkey()
+    {
+        IsCapturingHotkey = true;
+    }
+
+    [RelayCommand]
+    private void CancelCapturingHotkey()
+    {
+        IsCapturingHotkey = false;
+    }
+
+    [RelayCommand]
+    private void ResetHotkey()
+    {
+        SetHotkey(3, 98); // Ctrl+Shift+F9
+    }
+
     private void SaveSettings()
     {
         Task.Run(async () =>
@@ -205,10 +305,12 @@ public partial class MainWindowViewModel : ViewModelBase
                     SelectedTabIndex = SelectedTabIndex,
                     AutoStartMovement = AutoStartMovement,
                     MinimizeToTray = MinimizeToTray,
-                    StartMinimizedToTray = StartMinimizedToTray
+                    StartMinimizedToTray = StartMinimizedToTray,
+                    HotkeyModifiers = HotkeyModifiers,
+                    HotkeyKey = HotkeyKey
                 };
                 await _settingsService.SaveApplicationSettingsAsync(appSettings).ConfigureAwait(false);
-                
+
                 _logger.LogInformation("Saving settings: {@Settings}", appSettings);
             }
             catch (Exception ex)
@@ -218,7 +320,7 @@ public partial class MainWindowViewModel : ViewModelBase
             }
         });
     }
-    
+
     private void LoadSettings()
     {
         try
@@ -228,6 +330,9 @@ public partial class MainWindowViewModel : ViewModelBase
             AutoStartMovement = appSettings.AutoStartMovement;
             MinimizeToTray = appSettings.MinimizeToTray;
             StartMinimizedToTray = appSettings.StartMinimizedToTray;
+            HotkeyModifiers = appSettings.HotkeyModifiers;
+            HotkeyKey = appSettings.HotkeyKey;
+            GlobalHotkeyDisplayString = _globalHotkeyService.GetDisplayString(HotkeyModifiers, HotkeyKey);
         }
         catch (Exception ex)
         {

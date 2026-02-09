@@ -6,7 +6,7 @@ namespace RatJiggler.Services;
 
 public class LinuxMouseService : INormalMouseService, IRealisticMouseService
 {
-    public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement)
+    public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement, bool enableClick, int clickButton, int clickIntervalSeconds = 5, bool enableUserInterventionDetection = true, Action? onStopped = null)
     {
         throw new NotImplementedException();
     }

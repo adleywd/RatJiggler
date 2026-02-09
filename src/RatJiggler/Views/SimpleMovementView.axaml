@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:RatJiggler.ViewModels"
+             xmlns:converters="clr-namespace:RatJiggler.Converters"
              x:Class="RatJiggler.Views.SimpleMovementView"
              x:DataType="vm:SimpleMovementViewModel">
 
@@ -11,6 +12,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Movement Settings -->
@@ -18,9 +20,9 @@
                 <StackPanel Spacing="10">
                     <TextBlock Text="Movement Settings"
                                Classes="heading" />
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5,0,0">
-                        <!-- X and Y Movement -->
-                        <Label Content="Horizontal:"
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto" Margin="0,5,0,0">
+                        <!-- X and Y on same row -->
+                        <Label Content="Horizontal (px):"
                                Grid.Row="0" Grid.Column="0"
                                Margin="5" HorizontalAlignment="Right"
                                ToolTip.Tip="How far left/right the mouse will move (in pixels)" />
@@ -28,36 +30,78 @@
                                  Grid.Row="0" Grid.Column="1"
                                  Margin="5" HorizontalAlignment="Left" />
 
-                        <Label Content="Vertical:"
-                               Grid.Row="1" Grid.Column="0"
+                        <Label Content="Vertical (px):"
+                               Grid.Row="0" Grid.Column="2"
                                Margin="5" HorizontalAlignment="Right"
                                ToolTip.Tip="How far up/down the mouse will move (in pixels)" />
                         <TextBox Text="{Binding MoveY}" Width="100"
-                                 Grid.Row="1" Grid.Column="1"
+                                 Grid.Row="0" Grid.Column="3"
                                  Margin="5" HorizontalAlignment="Left" />
 
-                        <!-- Duration -->
-                        <Label Content="Duration:"
-                               Grid.Row="2" Grid.Column="0"
+                        <!-- Duration below -->
+                        <Label Content="Duration (sec):"
+                               Grid.Row="1" Grid.Column="0"
                                Margin="5" HorizontalAlignment="Right"
                                ToolTip.Tip="How long it takes to complete one movement (in seconds)" />
                         <TextBox Text="{Binding Duration}" Width="100"
-                                 Grid.Row="2" Grid.Column="1"
+                                 Grid.Row="1" Grid.Column="1"
                                  Margin="5" HorizontalAlignment="Left" />
                     </Grid>
                 </StackPanel>
             </Border>
 
-            <!-- Back/Forth Toggle -->
+            <!-- Behavior (merged BackAndForth + UserInterventionDetection) -->
             <Border Grid.Row="1" Classes="card">
-                <CheckBox IsChecked="{Binding BackAndForth}"
-                          Content="Alternate movement directions"
-                          HorizontalAlignment="Left"
-                          ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction." />
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Behavior"
+                               Classes="heading" />
+                    <CheckBox IsChecked="{Binding BackAndForth}"
+                              Content="Alternate movement directions"
+                              HorizontalAlignment="Left"
+                              ToolTip.Tip="When enabled: Mouse moves right then left (repeating). When disabled: Mouse keeps moving in the same direction." />
+                    <CheckBox IsChecked="{Binding EnableUserInterventionDetection}"
+                              Content="Stop on manual mouse movement"
+                              HorizontalAlignment="Left"
+                              ToolTip.Tip="When enabled, mouse jiggling will automatically stop if you move the mouse yourself" />
+                </StackPanel>
+            </Border>
+
+            <!-- Mouse Click (inline) -->
+            <Border Grid.Row="2" Classes="card">
+                <StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
+                    <TextBlock Text="Mouse Click"
+                               Classes="subheading"
+                               Margin="0"
+                               VerticalAlignment="Center" />
+                    <CheckBox IsChecked="{Binding EnableClick}"
+                              Content="Enable"
+                              VerticalAlignment="Center"
+                              ToolTip.Tip="When enabled, a mouse click will be performed at the configured interval" />
+                    <RadioButton Content="Left"
+                                 IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=1}"
+                                 GroupName="SimpleClickButton"
+                                 IsEnabled="{Binding EnableClick}"
+                                 VerticalAlignment="Center"
+                                 ToolTip.Tip="Perform left mouse clicks" />
+                    <RadioButton Content="Right"
+                                 IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=2}"
+                                 GroupName="SimpleClickButton"
+                                 IsEnabled="{Binding EnableClick}"
+                                 VerticalAlignment="Center"
+                                 ToolTip.Tip="Perform right mouse clicks" />
+                    <Label Content="Every (sec):"
+                           VerticalAlignment="Center"
+                           IsEnabled="{Binding EnableClick}"
+                           ToolTip.Tip="How often to click (in seconds)" />
+                    <TextBox Text="{Binding ClickIntervalSeconds}" Width="60"
+                             VerticalAlignment="Center"
+                             IsEnabled="{Binding EnableClick}"
+                             ToolTip.Tip="Click interval in seconds" />
+                </StackPanel>
             </Border>
 
             <!-- Settings Buttons -->
-            <StackPanel Grid.Row="2"
+            <StackPanel Grid.Row="3"
                         Orientation="Horizontal"
                         HorizontalAlignment="Center"
                         Spacing="15"

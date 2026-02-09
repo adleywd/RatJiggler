@@ -16,7 +16,7 @@ public class LinuxNormalMouseService : INormalMouseService
         LinuxMouseUtility.Initialize();
     }
 
-    public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement)
+    public void Start(int moveX, int moveY, int secondsBetweenMovement, bool backAndForthMovement, bool enableClick, int clickButton, int clickIntervalSeconds = 5, bool enableUserInterventionDetection = true, Action? onStopped = null)
     {
         if (_isRunning)
         {
@@ -54,6 +54,18 @@ public class LinuxNormalMouseService : INormalMouseService
                 }
             }
         }, token);
+
+        if (enableClick)
+        {
+            Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(clickIntervalSeconds), token).ConfigureAwait(false);
+                    LinuxMouseUtility.Click(clickButton);
+                }
+            }, token);
+        }
     }
 
     public void Stop()

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,19 @@ public partial class SimpleMovementViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _backAndForth = true;
-    
+
+    [ObservableProperty]
+    private bool _enableClick;
+
+    [ObservableProperty]
+    private int _clickButton = 1;
+
+    [ObservableProperty]
+    private int _clickIntervalSeconds = 5;
+
+    [ObservableProperty]
+    private bool _enableUserInterventionDetection = true;
+
     [ObservableProperty]
     private bool _isRunning = false;
 
@@ -53,6 +66,10 @@ public partial class SimpleMovementViewModel : ViewModelBase
             MoveY = settings.MoveY;
             Duration = settings.Duration;
             BackAndForth = settings.BackAndForth;
+            EnableClick = settings.EnableClick;
+            ClickButton = settings.ClickButton;
+            ClickIntervalSeconds = settings.ClickIntervalSeconds;
+            EnableUserInterventionDetection = settings.EnableUserInterventionDetection;
         }
         catch (Exception ex)
         {
@@ -66,7 +83,7 @@ public partial class SimpleMovementViewModel : ViewModelBase
     {
         try
         {
-            _normalMouseService.Start(MoveX, MoveY, Duration, BackAndForth);
+            _normalMouseService.Start(MoveX, MoveY, Duration, BackAndForth, EnableClick, ClickButton, ClickIntervalSeconds, EnableUserInterventionDetection, () => Dispatcher.UIThread.InvokeAsync(StopMovement));
             _statusMessageService.SetStatusMessage("Simple mouse movement started", "Green");
             IsRunning = true;
         }
@@ -103,7 +120,11 @@ public partial class SimpleMovementViewModel : ViewModelBase
                 MoveX = MoveX,
                 MoveY = MoveY,
                 Duration = Duration,
-                BackAndForth = BackAndForth
+                BackAndForth = BackAndForth,
+                EnableClick = EnableClick,
+                ClickButton = ClickButton,
+                ClickIntervalSeconds = ClickIntervalSeconds,
+                EnableUserInterventionDetection = EnableUserInterventionDetection
             };
 
             await _settingsService.SaveSimpleMovementSettingsAsync(settings).ConfigureAwait(false);

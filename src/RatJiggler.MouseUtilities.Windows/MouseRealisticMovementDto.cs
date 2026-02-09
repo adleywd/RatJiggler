@@ -20,4 +20,7 @@ public record MouseRealisticMovementDto
     public float PaddingPercentage { get; init; }
     public bool EnableUserInterventionDetection { get; init; }
     public int MovementThresholdInPixels { get; init; }
+    public bool EnableClick { get; init; }
+    public int ClickButton { get; init; } = 1;
+    public int ClickIntervalSeconds { get; init; } = 5;
 }

@@ -57,6 +57,17 @@ public static class LinuxMouseUtility
         XFlush(_display.Value);
     }
 
+    /// <summary>
+    /// Performs a mouse click (down + up) with the specified button.
+    /// </summary>
+    /// <param name="button">1 for left click, 2 for right click. Maps to X11 buttons (1=Left, 3=Right).</param>
+    public static void Click(int button)
+    {
+        var x11Button = button == 2 ? 3 : 1;
+        MouseButtonDown(x11Button);
+        MouseButtonUp(x11Button);
+    }
+
     public static void MouseButtonDown(int button)
     {
         if (_display == null)

@@ -14,6 +14,7 @@ public class WindowsRealisticMouseService : IRealisticMouseService
     private readonly ILogger<WindowsRealisticMouseService> _logger;
     private CancellationTokenSource? _cts;
     private Task? _backgroundTask;
+    private Task? _clickTask;
 
     public WindowsRealisticMouseService(ILogger<WindowsRealisticMouseService> logger)
     {
@@ -31,6 +32,11 @@ public class WindowsRealisticMouseService : IRealisticMouseService
         Console.WriteLine("Starting realistic background task...");
         _cts = new CancellationTokenSource();
         _backgroundTask = Task.Run(() => DoMoveRealisticAsync(mouseRealisticMovementDto, onStopped, _cts.Token));
+
+        if (mouseRealisticMovementDto.EnableClick)
+        {
+            _clickTask = Task.Run(() => DoClickAsync(mouseRealisticMovementDto.ClickButton, mouseRealisticMovementDto.ClickIntervalSeconds, _cts.Token));
+        }
     }
 
     public void Stop()
@@ -42,6 +48,15 @@ public class WindowsRealisticMouseService : IRealisticMouseService
 
         _logger.LogInformation("Stopping background task...");
         _cts.Cancel();
+    }
+
+    private async Task DoClickAsync(int clickButton, int clickIntervalSeconds, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(clickIntervalSeconds), cancellationToken).ConfigureAwait(false);
+            MouseUtility.Click(clickButton);
+        }
     }
 
     private async Task DoMoveRealisticAsync(MouseRealisticMovementDto mouseRealisticMovementDto, Action? onStopped = null, CancellationToken cancellationToken = default)

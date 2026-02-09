@@ -1,137 +1,170 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:RatJiggler.ViewModels"
+             xmlns:converters="clr-namespace:RatJiggler.Converters"
              x:Class="RatJiggler.Views.RealisticMovementView"
              x:DataType="vm:RealisticMovementViewModel">
 
-    <Grid Margin="10">
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="15">
-                <!-- Speed Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Speed"
-                                   Classes="heading" />
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="15" Margin="10">
+            <!-- Speed Settings -->
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Speed"
+                               Classes="heading" />
 
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto">
-                            <Label Content="Min speed:"
-                                   Grid.Column="0" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Slowest possible movement speed" />
-                            <NumericUpDown Value="{Binding MinSpeed}" Maximum="10" Minimum="1" Width="120"
-                                           Grid.Column="1" Margin="5" VerticalAlignment="Center" />
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto">
+                        <Label Content="Min speed:"
+                               Grid.Column="0" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Slowest possible movement speed" />
+                        <NumericUpDown Value="{Binding MinSpeed}" Maximum="10" Minimum="1" Width="120"
+                                       Grid.Column="1" Margin="5" VerticalAlignment="Center" />
 
-                            <Label Content="Max speed:"
-                                   Grid.Column="2" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Fastest possible movement speed" />
-                            <NumericUpDown Value="{Binding MaxSpeed}" Maximum="10" Minimum="1" Width="120"
-                                           Grid.Column="3" Margin="5" VerticalAlignment="Center" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Pause Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Pauses"
-                                   Classes="heading" />
-
-                        <Border Background="{DynamicResource ControlBackgroundColor}" CornerRadius="4" Padding="10,5" Margin="0,0,0,5">
-                            <CheckBox IsChecked="{Binding EnableStepPauses}"
-                                      Content="Pause between movements"
-                                      HorizontalAlignment="Left"
-                                      ToolTip.Tip="Add short pauses after each mouse movement" />
-                        </Border>
-
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto">
-                            <Label Content="Min pause:"
-                                   Grid.Column="0" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Minimum time between movements (in milliseconds)" />
-                            <NumericUpDown Value="{Binding StepPauseMin}" Minimum="0" Width="120"
-                                           Grid.Column="1" Margin="5" VerticalAlignment="Center" />
-
-                            <Label Content="Max pause:"
-                                   Grid.Column="2" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Maximum time between movements (in milliseconds)" />
-                            <NumericUpDown Value="{Binding StepPauseMax}" Minimum="0" Width="120"
-                                           Grid.Column="3" Margin="5" VerticalAlignment="Center" />
-                        </Grid>
-
-                        <Border Background="{DynamicResource ControlBackgroundColor}" CornerRadius="4" Padding="10,5" Margin="0,5,0,5">
-                            <CheckBox IsChecked="{Binding EnableRandomPauses}"
-                                      Content="Add random pauses"
-                                      HorizontalAlignment="Left"
-                                      ToolTip.Tip="Occasionally insert longer pauses to mimic human behavior" />
-                        </Border>
-
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto">
-                            <Label Content="Max random:"
-                                   Grid.Row="0" Grid.Column="0" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Maximum duration for random pauses" />
-                            <NumericUpDown Value="{Binding RandomPauseMax}" Minimum="0" Width="120"
-                                           Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Center" />
-
-                            <Label Content="Min random:"
-                                   Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Minimum duration for random pauses" />
-                            <NumericUpDown Value="{Binding RandomPauseMin}" Minimum="0" Width="120"
-                                           Grid.Row="0" Grid.Column="3" Margin="5" VerticalAlignment="Center" />
-                            
-                            <Label Content="Chance (%):"
-                                   Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="How likely a random pause will occur (0-100%)" />
-                            <NumericUpDown Value="{Binding RandomPauseProbability}" Maximum="100" Minimum="0" Width="120"
-                                           Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Advanced Settings -->
-                <Border Classes="card">
-                    <StackPanel Spacing="10">
-                        <TextBlock Text="Advanced"
-                                   Classes="heading" />
-
-                        <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto">
-                            <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                                    Background="{DynamicResource ControlBackgroundColor}" CornerRadius="4" 
-                                    Padding="10,5" Margin="5">
-                                <CheckBox IsChecked="{Binding EnableUserInterventionDetection}"
-                                          Content="Stop on manual movement"
-                                          ToolTip.Tip="Automatically stops when you move the mouse yourself" />
-                            </Border>
-
-                            <Label Content="Sensitivity:"
-                                   Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="How far you need to move the mouse to stop automation" />
-                            <NumericUpDown Value="{Binding MovementThresholdInPixels}" Minimum="0" Width="120"
-                                           Grid.Row="0" Grid.Column="3" Margin="5" VerticalAlignment="Center" />
-
-                            <Label Content="Random seed:"
-                                   Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center"
-                                   ToolTip.Tip="Set a fixed number for predictable random patterns" />
-                            <NumericUpDown Value="{Binding RandomSeed}" Minimum="0" Width="120"
-                                           Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- Settings Buttons -->
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            Spacing="15"
-                            Margin="0,5,0,0">
-                    <Button Command="{Binding SaveSettingsCommand}"
-                            Content="Save Settings"
-                            HorizontalContentAlignment="Center"
-                            Width="150" />
-                    <Button Command="{Binding RestoreDefaultsCommand}"
-                            Content="Reset to Defaults"
-                            Classes="secondary"
-                            HorizontalContentAlignment="Center"
-                            Width="150" />
+                        <Label Content="Max speed:"
+                               Grid.Column="2" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Fastest possible movement speed" />
+                        <NumericUpDown Value="{Binding MaxSpeed}" Maximum="10" Minimum="1" Width="120"
+                                       Grid.Column="3" Margin="5" VerticalAlignment="Center" />
+                    </Grid>
                 </StackPanel>
+            </Border>
+
+            <!-- Pause Settings -->
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Pauses"
+                               Classes="heading" />
+
+                    <Border Background="{DynamicResource ControlBackgroundColor}" CornerRadius="4" Padding="10,5" Margin="0,0,0,5">
+                        <CheckBox IsChecked="{Binding EnableStepPauses}"
+                                  Content="Pause between movements"
+                                  HorizontalAlignment="Left"
+                                  ToolTip.Tip="Add short pauses after each mouse movement" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto">
+                        <Label Content="Min (ms):"
+                               Grid.Column="0" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Minimum time between movements (in milliseconds)" />
+                        <NumericUpDown Value="{Binding StepPauseMin}" Minimum="0" Width="120"
+                                       Grid.Column="1" Margin="5" VerticalAlignment="Center" />
+
+                        <Label Content="Max (ms):"
+                               Grid.Column="2" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Maximum time between movements (in milliseconds)" />
+                        <NumericUpDown Value="{Binding StepPauseMax}" Minimum="0" Width="120"
+                                       Grid.Column="3" Margin="5" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Border Background="{DynamicResource ControlBackgroundColor}" CornerRadius="4" Padding="10,5" Margin="0,5,0,5">
+                        <CheckBox IsChecked="{Binding EnableRandomPauses}"
+                                  Content="Add random pauses"
+                                  HorizontalAlignment="Left"
+                                  ToolTip.Tip="Occasionally insert longer pauses to mimic human behavior" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto">
+                        <Label Content="Min (ms):"
+                               Grid.Row="0" Grid.Column="0" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Minimum duration for random pauses" />
+                        <NumericUpDown Value="{Binding RandomPauseMin}" Minimum="0" Width="120"
+                                       Grid.Row="0" Grid.Column="1" Margin="5" VerticalAlignment="Center" />
+
+                        <Label Content="Max (ms):"
+                               Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Maximum duration for random pauses" />
+                        <NumericUpDown Value="{Binding RandomPauseMax}" Minimum="0" Width="120"
+                                       Grid.Row="0" Grid.Column="3" Margin="5" VerticalAlignment="Center" />
+
+                        <Label Content="Chance (%):"
+                               Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="How likely a random pause will occur (0-100%)" />
+                        <NumericUpDown Value="{Binding RandomPauseProbability}" Maximum="100" Minimum="0" Width="120"
+                                       Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Advanced + Mouse Click (merged) -->
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Advanced"
+                               Classes="heading" />
+
+                    <Grid ColumnDefinitions="Auto,*,Auto,*" RowDefinitions="Auto,Auto">
+                        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                Background="{DynamicResource ControlBackgroundColor}" CornerRadius="4"
+                                Padding="10,5" Margin="5">
+                            <CheckBox IsChecked="{Binding EnableUserInterventionDetection}"
+                                      Content="Stop on manual movement"
+                                      ToolTip.Tip="Automatically stops when you move the mouse yourself" />
+                        </Border>
+
+                        <Label Content="Sensitivity (px):"
+                               Grid.Row="0" Grid.Column="2" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="How far you need to move the mouse to stop automation" />
+                        <NumericUpDown Value="{Binding MovementThresholdInPixels}" Minimum="0" Width="120"
+                                       Grid.Row="0" Grid.Column="3" Margin="5" VerticalAlignment="Center" />
+
+                        <Label Content="Random seed:"
+                               Grid.Row="1" Grid.Column="0" Margin="5" VerticalAlignment="Center"
+                               ToolTip.Tip="Set a fixed number for predictable random patterns" />
+                        <NumericUpDown Value="{Binding RandomSeed}" Minimum="0" Width="120"
+                                       Grid.Row="1" Grid.Column="1" Margin="5" VerticalAlignment="Center" />
+                    </Grid>
+
+                    <Separator Margin="0,5" />
+
+                    <!-- Mouse Click (inline) -->
+                    <StackPanel Orientation="Horizontal" Spacing="15" VerticalAlignment="Center">
+                        <TextBlock Text="Mouse Click"
+                                   Classes="subheading"
+                                   Margin="0"
+                                   VerticalAlignment="Center" />
+                        <CheckBox IsChecked="{Binding EnableClick}"
+                                  Content="Enable"
+                                  VerticalAlignment="Center"
+                                  ToolTip.Tip="When enabled, a mouse click will be performed at the configured interval" />
+                        <RadioButton Content="Left"
+                                     IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=1}"
+                                     GroupName="RealisticClickButton"
+                                     IsEnabled="{Binding EnableClick}"
+                                     VerticalAlignment="Center"
+                                     ToolTip.Tip="Perform left mouse clicks" />
+                        <RadioButton Content="Right"
+                                     IsChecked="{Binding ClickButton, Converter={x:Static converters:IntEqualConverter.Instance}, ConverterParameter=2}"
+                                     GroupName="RealisticClickButton"
+                                     IsEnabled="{Binding EnableClick}"
+                                     VerticalAlignment="Center"
+                                     ToolTip.Tip="Perform right mouse clicks" />
+                        <Label Content="Every (sec):"
+                               VerticalAlignment="Center"
+                               IsEnabled="{Binding EnableClick}"
+                               ToolTip.Tip="How often to click (in seconds)" />
+                        <NumericUpDown Value="{Binding ClickIntervalSeconds}" Minimum="1" Width="100"
+                                       VerticalAlignment="Center"
+                                       IsEnabled="{Binding EnableClick}"
+                                       ToolTip.Tip="Click interval in seconds" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Settings Buttons -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Spacing="15"
+                        Margin="0,5,0,0">
+                <Button Command="{Binding SaveSettingsCommand}"
+                        Content="Save Settings"
+                        HorizontalContentAlignment="Center"
+                        Width="150" />
+                <Button Command="{Binding RestoreDefaultsCommand}"
+                        Content="Reset to Defaults"
+                        Classes="secondary"
+                        HorizontalContentAlignment="Center"
+                        Width="150" />
             </StackPanel>
-        </ScrollViewer>
-    </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

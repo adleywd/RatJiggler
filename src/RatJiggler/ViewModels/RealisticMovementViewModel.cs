@@ -64,6 +64,15 @@ public partial class RealisticMovementViewModel : ViewModelBase
     private int _movementThresholdInPixels = 10;
 
     [ObservableProperty]
+    private bool _enableClick;
+
+    [ObservableProperty]
+    private int _clickButton = 1;
+
+    [ObservableProperty]
+    private int _clickIntervalSeconds = 5;
+
+    [ObservableProperty]
     private bool _isRunning = false;
 
     public RealisticMovementViewModel(
@@ -102,6 +111,9 @@ public partial class RealisticMovementViewModel : ViewModelBase
             RandomSeed = settings.RandomSeed;
             EnableUserInterventionDetection = settings.EnableUserInterventionDetection;
             MovementThresholdInPixels = settings.MovementThresholdInPixels;
+            EnableClick = settings.EnableClick;
+            ClickButton = settings.ClickButton;
+            ClickIntervalSeconds = settings.ClickIntervalSeconds;
         }
         catch (Exception ex)
         {
@@ -133,7 +145,10 @@ public partial class RealisticMovementViewModel : ViewModelBase
                 VerticalBias = VerticalBias,
                 PaddingPercentage = PaddingPercentage,
                 EnableUserInterventionDetection = EnableUserInterventionDetection,
-                MovementThresholdInPixels = MovementThresholdInPixels
+                MovementThresholdInPixels = MovementThresholdInPixels,
+                EnableClick = EnableClick,
+                ClickButton = ClickButton,
+                ClickIntervalSeconds = ClickIntervalSeconds
             };
 
             _realisticMouseService.StartRealistic(movementDto, () => Dispatcher.UIThread.InvokeAsync(StopMovement));
@@ -184,7 +199,10 @@ public partial class RealisticMovementViewModel : ViewModelBase
                 PaddingPercentage = PaddingPercentage,
                 RandomSeed = RandomSeed,
                 EnableUserInterventionDetection = EnableUserInterventionDetection,
-                MovementThresholdInPixels = MovementThresholdInPixels
+                MovementThresholdInPixels = MovementThresholdInPixels,
+                EnableClick = EnableClick,
+                ClickButton = ClickButton,
+                ClickIntervalSeconds = ClickIntervalSeconds
             };
 
             await _settingsService.SaveRealisticMovementSettingsAsync(settings).ConfigureAwait(false);

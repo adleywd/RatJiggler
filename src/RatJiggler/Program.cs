@@ -97,6 +97,7 @@ internal static class Program
             // Add Windows mouse services
             hostBuilder.Services.AddSingleton<INormalMouseService, WindowsNormalMouseService>();
             hostBuilder.Services.AddSingleton<IRealisticMouseService, WindowsRealisticMouseService>();
+            hostBuilder.Services.AddSingleton<IGlobalHotkeyService, WindowsGlobalHotkeyService>();
         }
         else if (OperatingSystem.IsLinux())
         {
@@ -111,6 +112,7 @@ internal static class Program
             // Add Linux mouse services
             hostBuilder.Services.AddSingleton<INormalMouseService, LinuxNormalMouseService>();
             hostBuilder.Services.AddSingleton<IRealisticMouseService, LinuxRealisticMouseService>();
+            hostBuilder.Services.AddSingleton<IGlobalHotkeyService, StubGlobalHotkeyService>();
         }
         else
         {

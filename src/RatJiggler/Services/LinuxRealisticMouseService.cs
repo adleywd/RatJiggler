@@ -13,6 +13,7 @@ public class LinuxRealisticMouseService : IRealisticMouseService
     private CancellationTokenSource? _cancellationTokenSource;
     private bool _isRunning;
     private readonly Random _random = new();
+    private Task? _clickTask;
 
     public LinuxRealisticMouseService()
     {
@@ -73,6 +74,18 @@ public class LinuxRealisticMouseService : IRealisticMouseService
 
             onStopped?.Invoke();
         }, token);
+
+        if (mouseRealisticMovementDto.EnableClick)
+        {
+            _clickTask = Task.Run(async () =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(mouseRealisticMovementDto.ClickIntervalSeconds), token).ConfigureAwait(false);
+                    LinuxMouseUtility.Click(mouseRealisticMovementDto.ClickButton);
+                }
+            }, token);
+        }
     }
 
     private Point CalculateNextPosition(
